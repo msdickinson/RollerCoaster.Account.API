@@ -1,0 +1,83 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29519.181
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RollerCoaster.Account.API.View", "RollerCoaster.Account.API.View\RollerCoaster.Account.API.View.csproj", "{42079A75-5A67-4F61-AE9F-3D74D5A01E53}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "0 Abstractions", "0 Abstractions", "{220857DB-61E3-4F71-9E10-106F6EFB3264}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1 View", "1 View", "{F31D88E1-C721-4AB7-A709-81138B4DD58E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2 Logic", "2 Logic", "{28F281E5-78F6-43A8-877C-13B9FA2C6A07}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3 Infrastructure", "3 Infrastructure", "{D226863E-D0D9-47FA-9ACF-F06A02873C59}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "9 Misc", "9 Misc", "{8A4DD530-E34A-467C-924B-00D7413F8693}"
+	ProjectSection(SolutionItems) = preProject
+		RollerCoaster.Account.API.runsettings = RollerCoaster.Account.API.runsettings
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RollerCoaster.Account.API.Infrastructure", "RollerCoaster.Account.API.Infrastructure\RollerCoaster.Account.API.Infrastructure.csproj", "{F608FA3B-C28F-42AB-A1C2-D965F24E5E2F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RollerCoaster.Account.API.Abstractions", "RollerCoaster.Account.API.Abstractions\RollerCoaster.Account.API.Abstractions.csproj", "{C7491A9C-CD66-46B8-B915-412BA0640C73}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RollerCoaster.Account.API.View.Tests", "RollerCoaster.Account.API.View.Tests\RollerCoaster.Account.API.View.Tests.csproj", "{7249D11B-29E0-4C63-B6E0-BA668AF2F847}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RollerCoaster.Account.API.Logic", "RollerCoaster.Account.API.Logic\RollerCoaster.Account.API.Logic.csproj", "{89E7C304-4EBB-4A43-82CA-20DD29E0FDD3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RollerCoaster.Account.API.Logic.Tests", "RollerCoaster.Account.API.Logic.Tests\RollerCoaster.Account.API.Logic.Tests.csproj", "{8F8BB12E-CC27-4BD7-9159-81480057D7CE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RollerCoaster.Account.API.Infrastructure.Tests", "RollerCoaster.Account.API.Infrastructure.Tests\RollerCoaster.Account.API.Infrastructure.Tests.csproj", "{2FDC9D42-282C-4418-8D1A-4FE16E16F9B4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{42079A75-5A67-4F61-AE9F-3D74D5A01E53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42079A75-5A67-4F61-AE9F-3D74D5A01E53}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42079A75-5A67-4F61-AE9F-3D74D5A01E53}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42079A75-5A67-4F61-AE9F-3D74D5A01E53}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F608FA3B-C28F-42AB-A1C2-D965F24E5E2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F608FA3B-C28F-42AB-A1C2-D965F24E5E2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F608FA3B-C28F-42AB-A1C2-D965F24E5E2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F608FA3B-C28F-42AB-A1C2-D965F24E5E2F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C7491A9C-CD66-46B8-B915-412BA0640C73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7491A9C-CD66-46B8-B915-412BA0640C73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C7491A9C-CD66-46B8-B915-412BA0640C73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7491A9C-CD66-46B8-B915-412BA0640C73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7249D11B-29E0-4C63-B6E0-BA668AF2F847}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7249D11B-29E0-4C63-B6E0-BA668AF2F847}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7249D11B-29E0-4C63-B6E0-BA668AF2F847}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7249D11B-29E0-4C63-B6E0-BA668AF2F847}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89E7C304-4EBB-4A43-82CA-20DD29E0FDD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89E7C304-4EBB-4A43-82CA-20DD29E0FDD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89E7C304-4EBB-4A43-82CA-20DD29E0FDD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89E7C304-4EBB-4A43-82CA-20DD29E0FDD3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F8BB12E-CC27-4BD7-9159-81480057D7CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F8BB12E-CC27-4BD7-9159-81480057D7CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F8BB12E-CC27-4BD7-9159-81480057D7CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F8BB12E-CC27-4BD7-9159-81480057D7CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2FDC9D42-282C-4418-8D1A-4FE16E16F9B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FDC9D42-282C-4418-8D1A-4FE16E16F9B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2FDC9D42-282C-4418-8D1A-4FE16E16F9B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2FDC9D42-282C-4418-8D1A-4FE16E16F9B4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{42079A75-5A67-4F61-AE9F-3D74D5A01E53} = {F31D88E1-C721-4AB7-A709-81138B4DD58E}
+		{F608FA3B-C28F-42AB-A1C2-D965F24E5E2F} = {D226863E-D0D9-47FA-9ACF-F06A02873C59}
+		{C7491A9C-CD66-46B8-B915-412BA0640C73} = {220857DB-61E3-4F71-9E10-106F6EFB3264}
+		{7249D11B-29E0-4C63-B6E0-BA668AF2F847} = {F31D88E1-C721-4AB7-A709-81138B4DD58E}
+		{89E7C304-4EBB-4A43-82CA-20DD29E0FDD3} = {28F281E5-78F6-43A8-877C-13B9FA2C6A07}
+		{8F8BB12E-CC27-4BD7-9159-81480057D7CE} = {28F281E5-78F6-43A8-877C-13B9FA2C6A07}
+		{2FDC9D42-282C-4418-8D1A-4FE16E16F9B4} = {D226863E-D0D9-47FA-9ACF-F06A02873C59}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1FF6AEBB-1AD2-4004-B001-B3777B7851FC}
+	EndGlobalSection
+EndGlobal

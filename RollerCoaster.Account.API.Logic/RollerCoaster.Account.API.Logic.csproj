@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DickinsonBros.Guid.Abstractions" Version="2.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RollerCoaster.Account.API.Abstractions\RollerCoaster.Account.API.Abstractions.csproj" />
+    <ProjectReference Include="..\RollerCoaster.Account.API.Infrastructure\RollerCoaster.Account.API.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
