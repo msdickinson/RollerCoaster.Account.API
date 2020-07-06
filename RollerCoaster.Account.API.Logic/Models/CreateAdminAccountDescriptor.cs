@@ -3,9 +3,9 @@
 namespace RollerCoaster.Account.API.Logic.Models
 {
     [ExcludeFromCodeCoverage]
-    public class CreateAccountDescriptor
+    public class CreateAdminAccountDescriptor
     {
-        public CreateAccountResult Result { get; set; }
+        public CreateAdminAccountResult Result { get; set; }
         public int? AccountId { get; set; }
     }
 }

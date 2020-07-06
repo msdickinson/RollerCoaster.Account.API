@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace RollerCoaster.Account.API.View.Models
 {
     [ExcludeFromCodeCoverage]
-    public class AdministrationWebSiteJWTServiceOptions : JWTServiceOptions
+    public class RollerCoasterJWTServiceOptions : JWTServiceOptions
     {
     }
 }

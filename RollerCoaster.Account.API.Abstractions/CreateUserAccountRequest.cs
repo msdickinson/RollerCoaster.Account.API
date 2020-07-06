@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace RollerCoaster.Acccount.API.Abstractions
 {
     [ExcludeFromCodeCoverage]
-    public class CreateAccountRequest
+    public class CreateUserAccountRequest
     {
         [Required]
         [MinLength(1)]

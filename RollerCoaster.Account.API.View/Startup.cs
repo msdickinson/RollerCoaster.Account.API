@@ -16,11 +16,11 @@ using DickinsonBros.Telemetry.Extensions;
 using DickinsonBros.Telemetry.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using RollerCoaster.Acccount.API.View.Models;
@@ -29,8 +29,11 @@ using RollerCoaster.Account.API.Infrastructure.AccountDB.Models;
 using RollerCoaster.Account.API.Infrastructure.AccountEmail;
 using RollerCoaster.Account.API.Infrastructure.PasswordEncryption;
 using RollerCoaster.Account.API.Logic;
+using RollerCoaster.Account.API.Logic.Models;
 using RollerCoaster.Account.API.View.Models;
 using RollerCoaster.Account.API.View.Services;
+using Serilog;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
@@ -54,6 +57,22 @@ namespace RollerCoaster.Acccount.API.View
                 options.SuppressMapClientErrors = true;
             });
 
+            //Add Splunk/Serilog
+            services.AddLogging(loggingBuilder =>
+            {
+                var logger = new LoggerConfiguration()
+                    .ReadFrom.Configuration(Configuration)
+                    .CreateLogger();
+
+                loggingBuilder.AddSerilog
+                (
+                    logger,
+                    dispose: true
+                );
+
+                loggingBuilder.AddConfiguration(Configuration);
+            });
+
             //Add Guid Service
             services.AddGuidService();
 
@@ -65,7 +84,7 @@ namespace RollerCoaster.Acccount.API.View
 
             //Add Logging Service
             services.AddLoggingService();
-
+ 
             //Add Redactor Service
             services.AddRedactorService();
             services.Configure<RedactorServiceOptions>(Configuration.GetSection(nameof(RedactorServiceOptions)));
@@ -86,12 +105,8 @@ namespace RollerCoaster.Acccount.API.View
             services.AddSingleton<IConfigureOptions<EmailServiceOptions>, EmailServiceOptionsConfigurator>();
 
             //Add JWTService Website
-            services.AddJWTService<WebsiteJWTServiceOptions>();
-            services.Configure<JWTServiceOptions<WebsiteJWTServiceOptions>>(Configuration.GetSection(nameof(WebsiteJWTServiceOptions)));
-
-            //Add JWTService Administration WebSite
-            services.AddJWTService<AdministrationWebSiteJWTServiceOptions>();
-            services.Configure<JWTServiceOptions<AdministrationWebSiteJWTServiceOptions>>(Configuration.GetSection(nameof(AdministrationWebSiteJWTServiceOptions)));
+            services.AddJWTService<RollerCoasterJWTServiceOptions>();
+            services.Configure<JWTServiceOptions<RollerCoasterJWTServiceOptions>>(Configuration.GetSection(nameof(RollerCoasterJWTServiceOptions)));
 
             //Add Versioning
             services.AddApiVersioning();
@@ -114,6 +129,8 @@ namespace RollerCoaster.Acccount.API.View
 
             //Add             
             services.AddSingleton<IAccountManager, AccountManager>();
+            services.Configure<AdminOptions>(Configuration.GetSection(nameof(AdminOptions)));
+
             services.AddSingleton<IAccountEmailService, AccountEmailService>();
             services.AddSingleton<IPasswordEncryptionService, PasswordEncryptionService>();
             services.AddSingleton<IAccountDBService, AccountDBService>();
@@ -123,7 +140,7 @@ namespace RollerCoaster.Acccount.API.View
         {
             services.AddSwaggerGen(options =>
             {
-                options.SwaggerDoc("v1", new OpenApiInfo { Title = "Admin API", Version = "1" });
+                options.SwaggerDoc("v1", new OpenApiInfo { Title = "A API", Version = "1" });
                 options.DocInclusionPredicate((version, apiDescription) =>
                 {
                     var apiVersionAttribute =
@@ -150,9 +167,27 @@ namespace RollerCoaster.Acccount.API.View
 
                     return false;
                 });
+                options.AddSecurityDefinition("Bearer",
+                   new OpenApiSecurityScheme
+                   {
+                       In = ParameterLocation.Header,
+                       Description = "Please enter into field the word 'Bearer' following by space and JWT",
+                       Name = "Authorization",
+                       Type = SecuritySchemeType.ApiKey
+                   });
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                {
+                     {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer" }
+                        }, new List<string>() }
+                });
             });
         }
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app)
         {
             app.UseMiddleware<MiddlewareService>();
 

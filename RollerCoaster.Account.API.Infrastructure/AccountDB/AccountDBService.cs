@@ -13,6 +13,10 @@ namespace RollerCoaster.Account.API.Infrastructure.AccountDB
         internal readonly ISQLService _sqlService;
 
         internal const string INSERT_ACCOUNT = "[Account].[Insert]";
+        internal const string SELECT_ACCOUNT_BY_USERNAME = "[Account].[SelectAccountByUsername]";
+        internal const string INSERT_PASSWORD_ATTEMPT_FAILED = "[Account].[InsertPasswordAttemptFailed]";
+        internal const string UPDATE_EMAIL_PREFERENCE = "[Account].[UpdateEmailPreference]";
+        internal const string UPDATE_EMAIL_PREFERENCES_WITH_TOKEN = "[Account].[UpdateEmailPreferenceWithToken]";
 
         public AccountDBService
         (
@@ -35,5 +39,54 @@ namespace RollerCoaster.Account.API.Infrastructure.AccountDB
                              commandType: CommandType.StoredProcedure
                          );
         }
+
+        public async Task<Abstractions.Account> SelectAccountByUserNameAsync(SelectAccountByUserNameRequest selectAccountByUserName)
+        {
+            return await _sqlService
+                        .QueryFirstOrDefaultAsync<Abstractions.Account>
+                         (
+                             _connectionString,
+                             SELECT_ACCOUNT_BY_USERNAME,
+                             selectAccountByUserName,
+                             commandType: CommandType.StoredProcedure
+                         );
+        }
+
+        public async Task InsertPasswordAttemptFailedAsync(InsertPasswordAttemptFailedRequest insertPasswordAttemptFailedRequest)
+        {
+            await _sqlService
+                   .ExecuteAsync
+                   (
+                       _connectionString,
+                       INSERT_PASSWORD_ATTEMPT_FAILED,
+                       insertPasswordAttemptFailedRequest,
+                       commandType: CommandType.StoredProcedure
+                   );
+        }
+
+        public async Task UpdateEmailPreferenceAsync(Models.UpdateEmailPreferenceRequest updateEmailPreferenceRequest)
+        {
+            await _sqlService
+                  .ExecuteAsync
+                  (
+                      _connectionString,
+                      UPDATE_EMAIL_PREFERENCE,
+                      updateEmailPreferenceRequest,
+                      commandType: CommandType.StoredProcedure
+                  );
+        }
+
+        public async Task<Models.UpdateEmailPreferenceWithTokenResult> UpdateEmailPreferenceWithTokenAsync(Models.UpdateEmailPreferenceWithTokenRequest updateEmailPreferenceWithTokenRequest)
+        {
+            return await _sqlService
+                         .QueryFirstAsync<Models.UpdateEmailPreferenceWithTokenResult>
+                         (
+                             _connectionString,
+                             UPDATE_EMAIL_PREFERENCES_WITH_TOKEN,
+                             updateEmailPreferenceWithTokenRequest,
+                             commandType: CommandType.StoredProcedure
+                         );
+        }
+
     }
 }

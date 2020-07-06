@@ -1,7 +1,8 @@
 ﻿namespace RollerCoaster.Account.API.Logic.Models
 {
-    public enum CreateAccountResult
+    public enum CreateAdminAccountResult
     {
+        InvaildToken,
         DuplicateUser,
         Successful
     }
