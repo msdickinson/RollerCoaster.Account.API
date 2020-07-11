@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace RollerCoaster.Account.API.Infrastructure.Tests.PasswordEncryption
 {
-    [TestClass]
+        [TestClass]
         public class PasswordEncryptionServiceTests : BaseTest
         {
             #region SendActivateEmailAsync

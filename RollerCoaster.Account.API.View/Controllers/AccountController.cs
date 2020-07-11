@@ -1,21 +1,22 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using System;
-using Microsoft.AspNetCore.Http;
-using DickinsonBros.DateTime.Abstractions;
-using RollerCoaster.Acccount.API.Abstractions;
-using RollerCoaster.Account.API.Logic;
-using System.Security.Claims;
+﻿using DickinsonBros.DateTime.Abstractions;
 using DickinsonBros.Encryption.JWT.Abstractions;
-using RollerCoaster.Account.API.View.Models;
 using DickinsonBros.Encryption.JWT.Abstractions.Models;
-using RollerCoaster.Account.API.Logic.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using RollerCoaster.Acccount.API.Abstractions;
 using RollerCoaster.Account.API.Abstractions;
+using RollerCoaster.Account.API.Logic;
+using RollerCoaster.Account.API.Logic.Models;
+using RollerCoaster.Account.API.View.Models;
+using System;
 using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace RollerCoaster.Account.API.View.Controllers
 {
+
     [ApiVersion("1.0")]
     [ApiController]
     [Route("api/v{version:apiVersion}/[controller]")]
@@ -25,6 +26,8 @@ namespace RollerCoaster.Account.API.View.Controllers
         internal const int FIFTEEN_MIN_IN_SECONDS = 900;
         internal const int TWO_HOURS_IN_SECONDS = 7200;
         internal const string BEARER_TOKEN_TYPE = "Bearer";
+        internal const string EMAIL_NOT_ACTIVATED_MESSAGE = "Email Not Activated";
+        internal const string NO_EMAIL_SENT_DUE_TO_EMAIL_PERFERENCEMESSAGE = "No Email Sent Due To Email Preference";
 
         internal readonly IDateTimeService _dateTimeService;
         internal readonly IAccountManager _accountManager;
@@ -47,12 +50,13 @@ namespace RollerCoaster.Account.API.View.Controllers
         /// </summary>
         /// <param name="createUserAccountRequest"></param>
         /// <returns></returns>
+        [AllowAnonymous]
         [HttpPost("CreateUserAccount")]
         [ProducesResponseType(typeof(Tokens), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult> CreateUserAccountAsync([FromBody]CreateUserAccountRequest createUserAccountRequest)
+        public async Task<ActionResult> CreateUserAccountAsync([FromBody] CreateUserAccountRequest createUserAccountRequest)
         {
             var createAccountDescriptor =
                 await _accountManager.CreateUserAsync
@@ -90,6 +94,7 @@ namespace RollerCoaster.Account.API.View.Controllers
         /// </summary>
         /// <param name="createAdminAccountRequest"></param>
         /// <returns></returns>
+        [AllowAnonymous]
         [HttpPost("CreateAdminAccount")]
         [ProducesResponseType(typeof(Tokens), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -140,6 +145,7 @@ namespace RollerCoaster.Account.API.View.Controllers
         /// </summary>
         /// <param name="loginRequest"></param>
         /// <returns></returns>
+        [AllowAnonymous]
         [HttpPost("Login")]
         [ProducesResponseType(typeof(Tokens), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -228,10 +234,12 @@ namespace RollerCoaster.Account.API.View.Controllers
         /// </summary>
         /// <param name="UpdateEmailPreference"></param>
         /// <returns></returns>     
+        /// 
+        [Authorize(Roles = Role.Admin + "," + Role.User)]
         [HttpPost("UpdateEmailPreference")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult> UpdateEmailPreferenceAsync([FromBody] UpdateEmailPreferenceRequest updateEmailPreferenceRequest)
         {
@@ -242,6 +250,12 @@ namespace RollerCoaster.Account.API.View.Controllers
             return StatusCode(200);
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="UpdateEmailPreferenceWithToken"></param>
+        /// <returns></returns>  
         [AllowAnonymous]
         [HttpPost("UpdateEmailPreferenceWithToken")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -249,12 +263,139 @@ namespace RollerCoaster.Account.API.View.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult> UpdateEmailPreferenceWithTokenAsync([FromBody] UpdateEmailPreferenceWithTokenRequest updateEmailPreferenceWithTokenRequest)
         {
+            if(!Guid.TryParse(updateEmailPreferenceWithTokenRequest.Token, out _))
+            {
+                return StatusCode(400);
+            }
+
             var updateEmailPreferenceWithTokenResult =
-                await _accountManager.UpdateEmailPreferenceWithTokenAsync(updateEmailPreferenceWithTokenRequest.Token, updateEmailPreferenceWithTokenRequest.EmailPreference);
+                await _accountManager.UpdateEmailPreferenceWithTokenAsync(updateEmailPreferenceWithTokenRequest.Token.ToString(), updateEmailPreferenceWithTokenRequest.EmailPreference);
 
             if (updateEmailPreferenceWithTokenResult == UpdateEmailPreferenceWithTokenResult.InvaildToken)
             {
                 return StatusCode(401);
+            }
+
+            return StatusCode(200);
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ActivateEmail"></param>
+        /// <returns></returns>     
+        [AllowAnonymous]
+        [HttpPost("ActivateEmail")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult> ActivateEmailAsync([FromBody] ActivateEmailRequest activateEmailRequest)
+        {
+            if (!Guid.TryParse(activateEmailRequest.Token, out _))
+            {
+                return StatusCode(400);
+            }
+
+            var activateAccountResult =
+                await _accountManager.ActivateEmailAsync(activateEmailRequest.Token);
+
+            if (activateAccountResult == ActivateEmailResult.InvaildToken)
+            {
+                return StatusCode(401);
+            }
+
+            if (activateAccountResult == ActivateEmailResult.EmailWasAlreadyActivated)
+            {
+                return StatusCode(400, "Email has already been activated");
+            }
+            return StatusCode(200);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="UpdatePassword"></param>
+        /// <returns></returns>     
+        [Authorize(Roles = Role.Admin + "," + Role.User)]
+        [HttpPost("UpdatePassword")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult> UpdatePasswordAsync([FromBody] UpdatePasswordRequest updatePasswordRequest)
+        {
+            int accountId = Convert.ToInt32(User.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value);
+
+            var updatePasswordResult =
+                await _accountManager.UpdatePasswordAsync(accountId, updatePasswordRequest.ExistingPassword, updatePasswordRequest.NewPassword).ConfigureAwait(false);
+
+            if (updatePasswordResult == UpdatePasswordResult.AccountLocked)
+            {
+                return StatusCode(403);
+            }
+
+            if (updatePasswordResult == UpdatePasswordResult.InvaildExistingPassword)
+            {
+                return StatusCode(401);
+            }
+
+            return StatusCode(200);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ResetPassword"></param>
+        /// <returns></returns>     
+        [AllowAnonymous]
+        [HttpPost("ResetPassword")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult> ResetPasswordAsync([FromBody] ResetPasswordRequest resetPasswordRequest)
+        {
+            if (!Guid.TryParse(resetPasswordRequest.Token, out _))
+            {
+                return StatusCode(400);
+            }
+
+            var resetPasswordResult =
+                await _accountManager.ResetPasswordAsync(resetPasswordRequest.Token, resetPasswordRequest.NewPassword);
+
+            if (resetPasswordResult == ResetPasswordResult.TokenInvaild)
+            {
+                return StatusCode(401);
+            }
+
+            return StatusCode(200);
+        }
+
+        [AllowAnonymous]
+        [HttpPost("RequestPasswordResetEmail")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult> RequestPasswordResetEmailAsync([FromBody] RequestPasswordResetEmailRequest requestPasswordResetEmailRequest)
+        {
+            var requestPasswordResetEmailResult =
+                await _accountManager.RequestPasswordResetEmailAsync(requestPasswordResetEmailRequest.Email);
+
+            if (requestPasswordResetEmailResult == RequestPasswordResetEmailResult.EmailNotFound)
+            {
+                return StatusCode(404);
+            }
+
+            if (requestPasswordResetEmailResult == RequestPasswordResetEmailResult.EmailNotActivated)
+            {
+                return StatusCode(403, EMAIL_NOT_ACTIVATED_MESSAGE);
+            }
+
+            if (requestPasswordResetEmailResult == RequestPasswordResetEmailResult.NoEmailSentDueToEmailPreference)
+            {
+                return StatusCode(403, NO_EMAIL_SENT_DUE_TO_EMAIL_PERFERENCEMESSAGE);
             }
 
             return StatusCode(200);

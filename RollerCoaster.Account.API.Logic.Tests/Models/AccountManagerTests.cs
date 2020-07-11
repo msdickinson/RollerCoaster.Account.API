@@ -12,6 +12,7 @@ using RollerCoaster.Account.API.Infrastructure.PasswordEncryption;
 using RollerCoaster.Account.API.Infrastructure.PasswordEncryption.Models;
 using RollerCoaster.Account.API.Logic.Models;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace RollerCoaster.Account.API.Logic.Tests.Models
@@ -1443,7 +1444,10 @@ namespace RollerCoaster.Account.API.Logic.Tests.Models
                     accountDBServiceMock
                     .Setup
                     (
-                        accountDBService => accountDBService.SelectAccountByUserNameAsync(It.IsAny<SelectAccountByUserNameRequest>())
+                        accountDBService => accountDBService.SelectAccountByUserNameAsync
+                        (
+                            It.IsAny<string>()
+                        )
                     )
                     .ReturnsAsync
                     (
@@ -1463,7 +1467,7 @@ namespace RollerCoaster.Account.API.Logic.Tests.Models
                     (
                         accountDBService => accountDBService.SelectAccountByUserNameAsync
                         (
-                            It.IsAny<SelectAccountByUserNameRequest>()
+                           username
                         ),
                         Times.Once
                     );
@@ -1489,7 +1493,10 @@ namespace RollerCoaster.Account.API.Logic.Tests.Models
                     accountDBServiceMock
                     .Setup
                     (
-                        accountDBService => accountDBService.SelectAccountByUserNameAsync(It.IsAny<SelectAccountByUserNameRequest>())
+                        accountDBService => accountDBService.SelectAccountByUserNameAsync
+                        (
+                            It.IsAny<string>()
+                        )
                     )
                     .ReturnsAsync
                     (
@@ -1533,7 +1540,10 @@ namespace RollerCoaster.Account.API.Logic.Tests.Models
                     accountDBServiceMock
                     .Setup
                     (
-                        accountDBService => accountDBService.SelectAccountByUserNameAsync(It.IsAny<SelectAccountByUserNameRequest>())
+                        accountDBService => accountDBService.SelectAccountByUserNameAsync
+                        (
+                            It.IsAny<string>()
+                        )
                     )
                     .ReturnsAsync
                     (
@@ -1592,7 +1602,10 @@ namespace RollerCoaster.Account.API.Logic.Tests.Models
                     accountDBServiceMock
                     .Setup
                     (
-                        accountDBService => accountDBService.SelectAccountByUserNameAsync(It.IsAny<SelectAccountByUserNameRequest>())
+                        accountDBService => accountDBService.SelectAccountByUserNameAsync
+                        (
+                            It.IsAny<string>()
+                        )
                     )
                     .ReturnsAsync
                     (
@@ -1671,7 +1684,10 @@ namespace RollerCoaster.Account.API.Logic.Tests.Models
                     accountDBServiceMock
                     .Setup
                     (
-                        accountDBService => accountDBService.SelectAccountByUserNameAsync(It.IsAny<SelectAccountByUserNameRequest>())
+                        accountDBService => accountDBService.SelectAccountByUserNameAsync
+                        (
+                            It.IsAny<string>()
+                        )
                     )
                     .ReturnsAsync
                     (
@@ -1681,7 +1697,10 @@ namespace RollerCoaster.Account.API.Logic.Tests.Models
                     accountDBServiceMock
                     .Setup
                     (
-                        accountDBService => accountDBService.InsertPasswordAttemptFailedAsync(It.IsAny<InsertPasswordAttemptFailedRequest>())
+                        accountDBService => accountDBService.InsertPasswordAttemptFailedAsync
+                        (
+                            It.IsAny<int>()
+                        )
                     );
 
                     var passwordEncryptionServiceMock = serviceProvider.GetMock<IPasswordEncryptionService>();
@@ -1712,7 +1731,7 @@ namespace RollerCoaster.Account.API.Logic.Tests.Models
                     (
                         accountDBService => accountDBService.InsertPasswordAttemptFailedAsync
                         (
-                            It.IsAny<InsertPasswordAttemptFailedRequest>()
+                            accountId
                         ),
                         Times.Once
                     );
@@ -1756,7 +1775,10 @@ namespace RollerCoaster.Account.API.Logic.Tests.Models
                     accountDBServiceMock
                     .Setup
                     (
-                        accountDBService => accountDBService.SelectAccountByUserNameAsync(It.IsAny<SelectAccountByUserNameRequest>())
+                        accountDBService => accountDBService.SelectAccountByUserNameAsync
+                        (
+                            It.IsAny<string>()
+                        )
                     )
                     .ReturnsAsync
                     (
@@ -1830,7 +1852,10 @@ namespace RollerCoaster.Account.API.Logic.Tests.Models
                     accountDBServiceMock
                     .Setup
                     (
-                        accountDBService => accountDBService.SelectAccountByUserNameAsync(It.IsAny<SelectAccountByUserNameRequest>())
+                        accountDBService => accountDBService.SelectAccountByUserNameAsync
+                        (
+                            It.IsAny<string>()
+                        )
                     )
                     .ReturnsAsync
                     (
@@ -1883,20 +1908,16 @@ namespace RollerCoaster.Account.API.Logic.Tests.Models
                     //Setup
                     var accountId = 1;
                     var emailPreference = EmailPreference.Any;
-                    var observedUpdateEmailPreferenceRequest = (Infrastructure.AccountDB.Models.UpdateEmailPreferenceRequest)null;
 
                     var accountDBServiceMock = serviceProvider.GetMock<IAccountDBService>();
                     accountDBServiceMock
                     .Setup(
                         accountDBService => accountDBService.UpdateEmailPreferenceAsync
                         (
-                            It.IsAny<Infrastructure.AccountDB.Models.UpdateEmailPreferenceRequest>()
+                            It.IsAny<int>(),
+                            It.IsAny<EmailPreference>()
                         )
-                    )
-                    .Callback((Infrastructure.AccountDB.Models.UpdateEmailPreferenceRequest updateEmailPreferenceRequest) =>
-                    {
-                        observedUpdateEmailPreferenceRequest = updateEmailPreferenceRequest;
-                    });
+                    );
 
                     var uut = serviceProvider.GetRequiredService<IAccountManager>();
                     var uutConcrete = (AccountManager)uut;
@@ -1910,14 +1931,11 @@ namespace RollerCoaster.Account.API.Logic.Tests.Models
                     (
                         accountDBService => accountDBService.UpdateEmailPreferenceAsync
                         (
-                            It.IsAny<Infrastructure.AccountDB.Models.UpdateEmailPreferenceRequest>()
+                           accountId,
+                           emailPreference
                         ),
                         Times.Once
                     );
-
-                    Assert.IsNotNull(observedUpdateEmailPreferenceRequest);
-                    Assert.AreEqual(accountId, observedUpdateEmailPreferenceRequest.AccountId);
-                    Assert.AreEqual(emailPreference, observedUpdateEmailPreferenceRequest.EmailPreference);
                 },
                serviceCollection => ConfigureServices(serviceCollection)
            );
@@ -1933,20 +1951,16 @@ namespace RollerCoaster.Account.API.Logic.Tests.Models
                     //Setup
                     var accountId = 1;
                     var emailPreference = EmailPreference.Any;
-                    var observedUpdateEmailPreferenceRequest = (Infrastructure.AccountDB.Models.UpdateEmailPreferenceRequest)null;
 
                     var accountDBServiceMock = serviceProvider.GetMock<IAccountDBService>();
                     accountDBServiceMock
                     .Setup(
                         accountDBService => accountDBService.UpdateEmailPreferenceAsync
                         (
-                            It.IsAny<Infrastructure.AccountDB.Models.UpdateEmailPreferenceRequest>()
+                            It.IsAny<int>(),
+                            It.IsAny<EmailPreference>()
                         )
-                    )
-                    .Callback((Infrastructure.AccountDB.Models.UpdateEmailPreferenceRequest updateEmailPreferenceRequest) =>
-                    {
-                        observedUpdateEmailPreferenceRequest = updateEmailPreferenceRequest;
-                    });
+                    );
 
                     var uut = serviceProvider.GetRequiredService<IAccountManager>();
                     var uutConcrete = (AccountManager)uut;
@@ -1995,32 +2009,29 @@ namespace RollerCoaster.Account.API.Logic.Tests.Models
                     (
                         accountDBService => accountDBService.UpdateEmailPreferenceWithTokenAsync
                         (
-                            It.IsAny<Infrastructure.AccountDB.Models.UpdateEmailPreferenceWithTokenRequest>()
+                            It.IsAny<string>(),
+                            It.IsAny<EmailPreference>()
                         )
                     )
-                    .Callback((Infrastructure.AccountDB.Models.UpdateEmailPreferenceWithTokenRequest updateEmailPreferencesWithTokenRequest) =>
-                    {
-                        updateEmailPreferencesWithTokenRequestObserved = updateEmailPreferencesWithTokenRequest;
-                    })
                     .ReturnsAsync
                     (
                         updateEmailPreferenceWithTokenResult
                     );
 
-                        //Act
-                        var observed = await uutConcrete.UpdateEmailPreferenceWithTokenAsync(token, emailPreference);
+                    //Act
+                    var observed = await uutConcrete.UpdateEmailPreferenceWithTokenAsync(token, emailPreference);
 
-                        //Assert
-                        accountDBServiceMock
-                    .Verify(
+                    //Assert
+                    accountDBServiceMock.
+                    Verify
+                    (
                         accountDBService => accountDBService.UpdateEmailPreferenceWithTokenAsync
                         (
-                            updateEmailPreferencesWithTokenRequestObserved
+                            token,
+                            emailPreference
                         ),
                         Times.Once
                     );
-                    Assert.AreEqual(token, updateEmailPreferencesWithTokenRequestObserved.EmailPreferenceToken);
-                    Assert.AreEqual(emailPreference, updateEmailPreferencesWithTokenRequestObserved.EmailPreference);
                 },
                 serviceCollection => ConfigureServices(serviceCollection)
             );
@@ -2044,25 +2055,16 @@ namespace RollerCoaster.Account.API.Logic.Tests.Models
                         VaildToken = false
                     };
 
-                    var updateEmailPreferencesWithTokenRequestObserved = new Infrastructure.AccountDB.Models.UpdateEmailPreferenceWithTokenRequest
-                    {
-                        EmailPreference = emailPreference,
-                        EmailPreferenceToken = token
-                    };
-
                     var accountDBServiceMock = serviceProvider.GetMock<IAccountDBService>();
                     accountDBServiceMock
                     .Setup
                     (
                         accountDBService => accountDBService.UpdateEmailPreferenceWithTokenAsync
                         (
-                            It.IsAny<Infrastructure.AccountDB.Models.UpdateEmailPreferenceWithTokenRequest>()
+                            It.IsAny<string>(),
+                            It.IsAny<EmailPreference>()
                         )
                     )
-                    .Callback((Infrastructure.AccountDB.Models.UpdateEmailPreferenceWithTokenRequest updateEmailPreferencesWithTokenRequest) =>
-                    {
-                        updateEmailPreferencesWithTokenRequestObserved = updateEmailPreferencesWithTokenRequest;
-                    })
                     .ReturnsAsync
                     (
                         updateEmailPreferenceWithTokenResult
@@ -2096,25 +2098,16 @@ namespace RollerCoaster.Account.API.Logic.Tests.Models
                         VaildToken = true
                     };
 
-                    var updateEmailPreferencesWithTokenRequestObserved = new Infrastructure.AccountDB.Models.UpdateEmailPreferenceWithTokenRequest
-                    {
-                        EmailPreference = emailPreference,
-                        EmailPreferenceToken = token
-                    };
-
                     var accountDBServiceMock = serviceProvider.GetMock<IAccountDBService>();
                     accountDBServiceMock
                     .Setup
                     (
                         accountDBService => accountDBService.UpdateEmailPreferenceWithTokenAsync
                         (
-                            It.IsAny<Infrastructure.AccountDB.Models.UpdateEmailPreferenceWithTokenRequest>()
+                            It.IsAny<string>(),
+                            It.IsAny<EmailPreference>()
                         )
                     )
-                    .Callback((Infrastructure.AccountDB.Models.UpdateEmailPreferenceWithTokenRequest updateEmailPreferencesWithTokenRequest) =>
-                    {
-                        updateEmailPreferencesWithTokenRequestObserved = updateEmailPreferencesWithTokenRequest;
-                    })
                     .ReturnsAsync
                     (
                         updateEmailPreferenceWithTokenResult
@@ -2130,130 +2123,1620 @@ namespace RollerCoaster.Account.API.Logic.Tests.Models
             );
         }
 
-
-        //[TestMethod]
-        //public async Task UpdateEmailSettingsAsync_TokenNotFound_ReturnsTokenNotFound()
-        //{
-        //    await RunDependencyInjectedTestAsync
-        //    (
-        //        async (serviceProvider) =>
-        //        {
-        //                //Setup
-        //                var uut = serviceProvider.GetRequiredService<IAccountManager>();
-        //            var uutConcrete = (AccountManager)uut;
-        //            var token = "1";
-        //            var emailPreference = EmailPreference.Any;
-        //            var accountDBServiceStub = serviceProvider.GetMock<IAccountDBService>();
-
-        //            accountDBServiceStub
-        //            .Setup
-        //            (
-        //                accountDBService => accountDBService.UpdateEmailPreferencesWithTokenAsync
-        //                (
-        //                    It.IsAny<UpdateEmailPreferencesWithTokenRequest>()
-        //                )
-        //            )
-        //            .ReturnsAsync
-        //            (
-        //                new UpdateEmailPreferencesWithTokenDBResult
-        //                {
-        //                    TokenFound = false
-        //                }
-        //            );
-
-        //                //Act
-        //                var observed = await uutConcrete.UpdateEmailSettingsAsync(token, emailPreference);
-
-        //                //Assert
-        //                Assert.AreEqual(UpdateEmailSettingsResult.TokenNotFound, observed);
-        //        },
-        //        serviceCollection => ConfigureServices(serviceCollection)
-        //    );
-        //}
-
-        //[TestMethod]
-        //public async Task UpdateEmailSettingsAsync_TokenExpired_ReturnsTokenExpired()
-        //{
-        //    await RunDependencyInjectedTestAsync
-        //    (
-        //        async (serviceProvider) =>
-        //        {
-        //                //Setup
-        //                var uut = serviceProvider.GetRequiredService<IAccountManager>();
-        //            var uutConcrete = (AccountManager)uut;
-        //            var token = "1";
-        //            var emailPreference = EmailPreference.Any;
-        //            var accountDBServiceStub = serviceProvider.GetMock<IAccountDBService>();
-
-        //            accountDBServiceStub
-        //            .Setup
-        //            (
-        //                accountDBService => accountDBService.UpdateEmailPreferencesWithTokenAsync
-        //                (
-        //                    It.IsAny<UpdateEmailPreferencesWithTokenRequest>()
-        //                )
-        //            )
-        //            .ReturnsAsync
-        //            (
-        //                new UpdateEmailPreferencesWithTokenDBResult
-        //                {
-        //                    TokenFound = true,
-        //                    TokenExpired = true
-        //                }
-        //            );
-
-        //                //Act
-        //                var observed = await uutConcrete.UpdateEmailSettingsAsync(token, emailPreference);
-
-        //                //Assert
-        //                Assert.AreEqual(UpdateEmailSettingsResult.TokenExpired, observed);
-        //        },
-        //        serviceCollection => ConfigureServices(serviceCollection)
-        //    );
-        //}
-
-        //[TestMethod]
-        //public async Task UpdateEmailSettingsAsync_VaildToken_ReturnsSuccessful()
-        //{
-        //    await RunDependencyInjectedTestAsync
-        //    (
-        //        async (serviceProvider) =>
-        //        {
-        //                //Setup
-        //                var uut = serviceProvider.GetRequiredService<IAccountManager>();
-        //            var uutConcrete = (AccountManager)uut;
-        //            var token = "1";
-        //            var emailPreference = EmailPreference.Any;
-        //            var accountDBServiceStub = serviceProvider.GetMock<IAccountDBService>();
-
-        //            accountDBServiceStub
-        //            .Setup
-        //            (
-        //                accountDBService => accountDBService.UpdateEmailPreferencesWithTokenAsync
-        //                (
-        //                    It.IsAny<UpdateEmailPreferencesWithTokenRequest>()
-        //                )
-        //            )
-        //            .ReturnsAsync
-        //            (
-        //                new UpdateEmailPreferencesWithTokenDBResult
-        //                {
-        //                    TokenFound = true,
-        //                    TokenExpired = false
-        //                }
-        //            );
-
-        //                //Act
-        //                var observed = await uutConcrete.UpdateEmailSettingsAsync(token, emailPreference);
-
-        //                //Assert
-        //                Assert.AreEqual(UpdateEmailSettingsResult.Successful, observed);
-        //        },
-        //        serviceCollection => ConfigureServices(serviceCollection)
-        //    );
-        //}
         #endregion
 
+        #region ActivateEmailAsync
+
+        [TestMethod]
+        public async Task ActivateEmailAsync_Runs_CallsActivateEmailWithTokenAsync()
+        {
+            await RunDependencyInjectedTestAsync
+            (
+                async (serviceProvider) =>
+                {
+                    //Setup
+                    var uut = serviceProvider.GetRequiredService<IAccountManager>();
+                    var uutConcrete = (AccountManager)uut;
+                    var token = "1";
+
+                    var accountDBServiceMock = serviceProvider.GetMock<IAccountDBService>();
+                    accountDBServiceMock
+                    .Setup
+                    (
+                        accountDBService => accountDBService.ActivateEmailWithTokenAsync
+                        (
+                            It.IsAny<string>()
+                        )
+                    )
+                    .ReturnsAsync
+                    (
+                       new ActivateEmailWithTokenResult
+                       {
+                           EmailWasAlreadyActivated = false,
+                           VaildToken = true
+                       }
+                    );
+
+                    //Act
+                    var observed = await uutConcrete.ActivateEmailAsync(token);
+
+                    //Assert
+                    accountDBServiceMock
+                    .Verify(
+                        accountDBService => accountDBService.ActivateEmailWithTokenAsync
+                        (
+                            token
+                        ),
+                        Times.Once
+                    );
+                },
+                serviceCollection => ConfigureServices(serviceCollection)
+            );
+        }
+
+        [TestMethod]
+        public async Task ActivateEmailAsync_InvaildToken_ReturnsInvaildToken()
+        {
+            await RunDependencyInjectedTestAsync
+            (
+                async (serviceProvider) =>
+                {
+                    //Setup
+                    var uut = serviceProvider.GetRequiredService<IAccountManager>();
+                    var uutConcrete = (AccountManager)uut;
+                    var token = "1";
+
+                    var accountDBServiceMock = serviceProvider.GetMock<IAccountDBService>();
+                    accountDBServiceMock
+                    .Setup
+                    (
+                        accountDBService => accountDBService.ActivateEmailWithTokenAsync
+                        (
+                            It.IsAny<string>()
+                        )
+                    )
+                    .ReturnsAsync
+                    (
+                       new ActivateEmailWithTokenResult
+                       {
+                           EmailWasAlreadyActivated = false,
+                           VaildToken = false
+                       }
+                    );
+
+                    //Act
+                    var observed = await uutConcrete.ActivateEmailAsync(token);
+
+                    //Assert
+                    Assert.AreEqual(ActivateEmailResult.InvaildToken, observed);
+                },
+                serviceCollection => ConfigureServices(serviceCollection)
+            );
+        }
+
+        [TestMethod]
+        public async Task ActivateEmailAsync_EmailWasAlreadyActivated_ReturnsEmailWasAlreadyActivated()
+        {
+            await RunDependencyInjectedTestAsync
+            (
+                async (serviceProvider) =>
+                {
+                    //Setup
+                    var uut = serviceProvider.GetRequiredService<IAccountManager>();
+                    var uutConcrete = (AccountManager)uut;
+                    var token = "1";
+
+                    var accountDBServiceMock = serviceProvider.GetMock<IAccountDBService>();
+                    accountDBServiceMock
+                    .Setup
+                    (
+                        accountDBService => accountDBService.ActivateEmailWithTokenAsync
+                        (
+                            It.IsAny<string>()
+                        )
+                    )
+                    .ReturnsAsync
+                    (
+                       new ActivateEmailWithTokenResult
+                       {
+                           EmailWasAlreadyActivated = true,
+                           VaildToken = true
+                       }
+                    );
+
+                    //Act
+                    var observed = await uutConcrete.ActivateEmailAsync(token);
+
+                    //Assert
+                    Assert.AreEqual(ActivateEmailResult.EmailWasAlreadyActivated, observed);
+                },
+                serviceCollection => ConfigureServices(serviceCollection)
+            );
+        }
+
+        [TestMethod]
+        public async Task ActivateEmailAsync_VaildTokenAndNotAlreadyActivated_ReturnsSuccessful()
+        {
+            await RunDependencyInjectedTestAsync
+            (
+                async (serviceProvider) =>
+                {
+                    //Setup
+                    var uut = serviceProvider.GetRequiredService<IAccountManager>();
+                    var uutConcrete = (AccountManager)uut;
+                    var token = "1";
+                    var accountDBServiceMock = serviceProvider.GetMock<IAccountDBService>();
+                    accountDBServiceMock
+                    .Setup
+                    (
+                        accountDBService => accountDBService.ActivateEmailWithTokenAsync
+                        (
+                            It.IsAny<string>()
+                        )
+                    )
+                    .ReturnsAsync
+                    (
+                       new ActivateEmailWithTokenResult
+                       {
+                           EmailWasAlreadyActivated = false,
+                           VaildToken = true
+                       }
+                    );
+
+                    //Act
+                    var observed = await uutConcrete.ActivateEmailAsync(token);
+
+                    //Assert
+                    Assert.AreEqual(ActivateEmailResult.Successful, observed);
+                },
+                serviceCollection => ConfigureServices(serviceCollection)
+            );
+        }
+
+        #endregion
+
+        #region UpdatePasswordAsync
+
+        [TestMethod]
+        public async Task UpdatePasswordAsync_Runs_CallsSelectAccountByAccountIdAsync()
+        {
+            await RunDependencyInjectedTestAsync
+            (
+                async (serviceProvider) =>
+                {
+                    //Setup
+                    var uut = serviceProvider.GetRequiredService<IAccountManager>();
+                    var uutConcrete = (AccountManager)uut;
+                    var accountId = 1;
+                    string existingPassword = "SampleExistingPassword";
+                    string newPassword = "SampleNewPassword";
+                    var accountDBServiceMock = serviceProvider.GetMock<IAccountDBService>();
+
+                    accountDBServiceMock
+                        .Setup
+                        (
+                            accountDBService => accountDBService.SelectAccountByAccountIdAsync
+                            (
+                                It.IsAny<int>()
+                            )
+                        )
+                        .ReturnsAsync
+                        (
+                            (Abstractions.Account)null
+                        );
+
+                        //Act
+                        var observed = await uutConcrete.UpdatePasswordAsync(accountId, existingPassword, newPassword);
+
+                        //Assert
+                        accountDBServiceMock
+                        .Verify(
+                            accountDBService => accountDBService.SelectAccountByAccountIdAsync
+                            (
+                                accountId
+                            ),
+                            Times.Once
+                        );
+                },
+                serviceCollection => ConfigureServices(serviceCollection)
+            );
+        }
+
+        [TestMethod]
+        public async Task UpdatePasswordAsync_AccountNotFound_ReturnsAccountNotFound()
+        {
+            await RunDependencyInjectedTestAsync
+            (
+                async (serviceProvider) =>
+                {
+                    //Setup
+                    var uut = serviceProvider.GetRequiredService<IAccountManager>();
+                    var uutConcrete = (AccountManager)uut;
+                    var accountId = 1;
+                    string existingPassword = "SampleExistingPassword";
+                    string newPassword = "SampleNewPassword";
+                    var accountDBServiceMock = serviceProvider.GetMock<IAccountDBService>();
+
+                    accountDBServiceMock
+                        .Setup
+                        (
+                            accountDBService => accountDBService.SelectAccountByAccountIdAsync
+                            (
+                                It.IsAny<int>()
+                            )
+                        )
+                        .ReturnsAsync
+                        (
+                            (Abstractions.Account)null
+                        );
+
+                        //Act
+                        var observed = await uutConcrete.UpdatePasswordAsync(accountId, existingPassword, newPassword);
+
+                        //Assert
+                        Assert.AreEqual(UpdatePasswordResult.AccountNotFound, observed);
+                },
+                serviceCollection => ConfigureServices(serviceCollection)
+            );
+        }
+
+        [TestMethod]
+        public async Task UpdatePasswordAsync_AccountLocked_ReturnsAccountNotFound()
+        {
+            await RunDependencyInjectedTestAsync
+            (
+                async (serviceProvider) =>
+                {
+                    //Setup
+                    var uut = serviceProvider.GetRequiredService<IAccountManager>();
+                    var uutConcrete = (AccountManager)uut;
+                    var accountId = 1;
+                    string existingPassword = "SampleExistingPassword";
+                    string newPassword = "SampleNewPassword";
+                    var accountDBServiceMock = serviceProvider.GetMock<IAccountDBService>();
+
+                    accountDBServiceMock
+                        .Setup
+                        (
+                            accountDBService => accountDBService.SelectAccountByAccountIdAsync
+                            (
+                                It.IsAny<int>()
+                            )
+                        )
+                        .ReturnsAsync
+                        (
+                            new Abstractions.Account
+                            {
+                                Locked = true
+                            }
+                        );
+
+                        //Act
+                        var observed = await uutConcrete.UpdatePasswordAsync(accountId, existingPassword, newPassword);
+
+                        //Assert
+                        Assert.AreEqual(UpdatePasswordResult.AccountLocked, observed);
+                },
+                serviceCollection => ConfigureServices(serviceCollection)
+            );
+        }
+
+        [TestMethod]
+        public async Task UpdatePasswordAsync_AccountSelected_EncryptExistingPassword()
+        {
+            await RunDependencyInjectedTestAsync
+            (
+                async (serviceProvider) =>
+                {
+                        //Setup
+                        var uut = serviceProvider.GetRequiredService<IAccountManager>();
+                    var uutConcrete = (AccountManager)uut;
+                    var accountId = 1;
+                    string existingPassword = "SampleExistingPassword";
+                    string newPassword = "SampleNewPassword";
+                    var account = new Abstractions.Account
+                    {
+                        AccountId = accountId,
+                        PasswordHash = "SampleHashOne",
+                        Salt = "SampleSaltOne"
+                    };
+
+                    var accountDBServiceMock = serviceProvider.GetMock<IAccountDBService>();
+                    accountDBServiceMock
+                        .Setup
+                        (
+                            accountDBService => accountDBService.SelectAccountByAccountIdAsync
+                            (
+                                It.IsAny<int>()
+                            )
+                        )
+                        .ReturnsAsync
+                        (
+                            account
+                        );
+
+                    var passwordEncryptionServiceMock = serviceProvider.GetMock<IPasswordEncryptionService>();
+                    passwordEncryptionServiceMock
+                        .Setup
+                        (
+                            passwordEncryptionService => passwordEncryptionService.Encrypt
+                            (
+                                It.IsAny<string>(),
+                                It.IsAny<string>()
+                            )
+                        )
+                        .Returns
+                        (
+                            new EncryptResult
+                            {
+                                Hash = "SampleHashTwo",
+                                Salt = "SampleSaltTwo"
+                            }
+                        );
+
+                    //Act
+                    var observed = await uutConcrete.UpdatePasswordAsync(accountId, existingPassword, newPassword);
+
+                    //Assert
+                    passwordEncryptionServiceMock
+                    .Verify
+                    (
+                        passwordEncryptionService => passwordEncryptionService.Encrypt
+                        (
+                            existingPassword,
+                            account.Salt
+                        ),
+                        Times.Once
+                    );
+                },
+                serviceCollection => ConfigureServices(serviceCollection)
+            );
+        }
+
+        [TestMethod]
+        public async Task UpdatePasswordAsync_InvaildExistingPassword_ReturnsInvaildExistingPassword()
+        {
+            await RunDependencyInjectedTestAsync
+            (
+                async (serviceProvider) =>
+                {
+                    //Setup
+                    var uut = serviceProvider.GetRequiredService<IAccountManager>();
+                    var uutConcrete = (AccountManager)uut;
+                    var accountId = 1;
+                    string existingPassword = "SampleExistingPassword";
+                    string newPassword = "SampleNewPassword";
+                    var account = new Abstractions.Account
+                    {
+                        AccountId = accountId,
+                        PasswordHash = "SampleHashOne",
+                        Salt = "SampleSaltOne"
+                    };
+
+                    var accountDBServiceMock = serviceProvider.GetMock<IAccountDBService>();
+                    accountDBServiceMock
+                        .Setup
+                        (
+                            accountDBService => accountDBService.SelectAccountByAccountIdAsync
+                            (
+                                It.IsAny<int>()
+                            )
+                        )
+                        .ReturnsAsync
+                        (
+                            account
+                        );
+
+                    var passwordEncryptionServiceMock = serviceProvider.GetMock<IPasswordEncryptionService>();
+                    passwordEncryptionServiceMock
+                        .Setup
+                        (
+                            passwordEncryptionService => passwordEncryptionService.Encrypt
+                            (
+                                It.IsAny<string>(),
+                                It.IsAny<string>()
+                            )
+                        )
+                        .Returns
+                        (
+                            new EncryptResult
+                            {
+                                Hash = "SampleHashTwo",
+                                Salt = "SampleSaltTwo"
+                            }
+                        );
+
+                        //Act
+                        var observed = await uutConcrete.UpdatePasswordAsync(accountId, existingPassword, newPassword);
+
+                        //Assert
+                        Assert.AreEqual(UpdatePasswordResult.InvaildExistingPassword, observed);
+                },
+                serviceCollection => ConfigureServices(serviceCollection)
+            );
+        }
+
+        [TestMethod]
+        public async Task UpdatePasswordAsync_ExistingPasswordsMatch_EncryptNewPassword()
+        {
+            await RunDependencyInjectedTestAsync
+            (
+                async (serviceProvider) =>
+                {
+                    //Setup
+                    var uut = serviceProvider.GetRequiredService<IAccountManager>();
+                    var uutConcrete = (AccountManager)uut;
+                    var accountId = 1;
+                    string existingPassword = "SampleExistingPassword";
+                    string newPassword = "SampleNewPassword";
+                    var account = new Abstractions.Account
+                    {
+                        AccountId = accountId,
+                        PasswordHash = "SampleHashOne",
+                        Salt = "SampleSaltOne"
+                    };
+
+                    var encryptResultsIndex = 0;
+                    var encryptResults = new List<EncryptResult>
+                    {
+                            new EncryptResult
+                            {
+                                Hash = "SampleHashOne",
+                                Salt = "SampleSaltOne"
+                            },
+                            new EncryptResult
+                            {
+                                Hash = "SampleHashTwo",
+                                Salt = "SampleSaltTwo"
+                            }
+                    };
+
+                    var accountDBServiceMock = serviceProvider.GetMock<IAccountDBService>();
+                    accountDBServiceMock
+                        .Setup
+                        (
+                            accountDBService => accountDBService.SelectAccountByAccountIdAsync
+                            (
+                                It.IsAny<int>()
+                            )
+                        )
+                        .ReturnsAsync
+                        (
+                            account
+                        );
+
+                    var passwordEncryptionServiceMock = serviceProvider.GetMock<IPasswordEncryptionService>();
+                    passwordEncryptionServiceMock
+                    .Setup
+                    (
+                        passwordEncryptionService => passwordEncryptionService.Encrypt
+                        (
+                            It.IsAny<string>(),
+                            It.IsAny<string>()
+                        )
+                    )
+                    .Returns
+                    (
+                        () =>
+                        {
+                            var result = encryptResults[encryptResultsIndex];
+                            encryptResultsIndex++;
+                            return result;
+                        });
+
+                    accountDBServiceMock
+                    .Setup
+                    (
+                        accountDBService => accountDBService.UpdatePasswordAsync
+                        (
+                            It.IsAny<int>(),
+                            It.IsAny<string>(),
+                            It.IsAny<string>()
+                        )
+                    )
+                    .Returns(Task.CompletedTask);
+
+                    //Act
+                    var observed = await uutConcrete.UpdatePasswordAsync(accountId, existingPassword, newPassword);
+
+                    //Assert
+                    passwordEncryptionServiceMock
+                    .Verify(
+                        passwordEncryptionService => passwordEncryptionService.Encrypt
+                        (
+                           newPassword,
+                            null
+                        ),
+                        Times.Once
+                    );
+                },
+                serviceCollection => ConfigureServices(serviceCollection)
+            );
+        }
+
+        [TestMethod]
+        public async Task UpdatePasswordAsync_ExistingPasswordsMatch_CallsUpdatedPasswordAsync()
+        {
+            await RunDependencyInjectedTestAsync
+            (
+                async (serviceProvider) =>
+                {
+                    //Setup
+                    var uut = serviceProvider.GetRequiredService<IAccountManager>();
+                    var uutConcrete = (AccountManager)uut;
+                    var accountId = 1;
+                    string existingPassword = "SampleExistingPassword";
+                    string newPassword = "SampleNewPassword";
+                    var account = new Abstractions.Account
+                    {
+                        AccountId = accountId,
+                        PasswordHash = "SampleHashOne",
+                        Salt = "SampleSaltOne"
+                    };
+
+                    var encryptResultsIndex = 0;
+                    var encryptResults = new List<EncryptResult>
+                    {
+                            new EncryptResult
+                            {
+                                Hash = "SampleHashOne",
+                                Salt = "SampleSaltOne"
+                            },
+                            new EncryptResult
+                            {
+                                Hash = "SampleHashTwo",
+                                Salt = "SampleSaltTwo"
+                            }
+                    };
+
+                    var accountIdObserved = (int?)null;
+                    var passwordHashObserved = (string)null;
+                    var saltObserved = (string)null;
+
+                    var accountDBServiceMock = serviceProvider.GetMock<IAccountDBService>();
+                    accountDBServiceMock
+                        .Setup
+                        (
+                            accountDBService => accountDBService.SelectAccountByAccountIdAsync
+                            (
+                                It.IsAny<int>()
+                            )
+                        )
+                        .ReturnsAsync
+                        (
+                            account
+                        );
+
+                    var passwordEncryptionServiceMock = serviceProvider.GetMock<IPasswordEncryptionService>();
+                    passwordEncryptionServiceMock
+                    .Setup
+                    (
+                        passwordEncryptionService => passwordEncryptionService.Encrypt
+                        (
+                            It.IsAny<string>(),
+                            It.IsAny<string>()
+                        )
+                    )
+                    .Returns
+                    (
+                        () =>
+                        {
+                            var result = encryptResults[encryptResultsIndex];
+                            encryptResultsIndex++;
+                            return result;
+                        });
+
+                    accountDBServiceMock
+                    .Setup
+                    (
+                        accountDBService => accountDBService.UpdatePasswordAsync
+                        (
+                            It.IsAny<int>(),
+                            It.IsAny<string>(),
+                            It.IsAny<string>()
+                        )
+                    )
+                    .Callback((int accountId, string passwordHash, string salt) =>
+                    {
+                        accountIdObserved = accountId;
+                        passwordHashObserved = passwordHash;
+                        saltObserved = salt;
+                    })
+                    .Returns(Task.CompletedTask);
+
+                    //Act
+                    var observed = await uutConcrete.UpdatePasswordAsync(accountId, existingPassword, newPassword);
+
+                    //Assert
+                    Assert.IsNotNull(accountIdObserved);
+
+                    accountDBServiceMock
+                    .Verify(
+                        accountDBService => accountDBService.UpdatePasswordAsync
+                        (
+                            (int)accountIdObserved,
+                            passwordHashObserved,
+                            saltObserved
+                        ),
+                        Times.Once
+                    );
+
+                    Assert.AreEqual(accountId, (int)accountIdObserved);
+                    Assert.AreEqual(encryptResults[1].Hash, passwordHashObserved);
+                    Assert.AreEqual(encryptResults[1].Salt, saltObserved);
+                },
+                serviceCollection => ConfigureServices(serviceCollection)
+            );
+        }
+
+        [TestMethod]
+        public async Task UpdatePasswordAsync_Successful_ReturnSuccessful()
+        {
+            await RunDependencyInjectedTestAsync
+            (
+                async (serviceProvider) =>
+                {
+                    //Setup
+                    var uut = serviceProvider.GetRequiredService<IAccountManager>();
+                    var uutConcrete = (AccountManager)uut;
+                    var accountId = 1;
+                    string existingPassword = "SampleExistingPassword";
+                    string newPassword = "SampleNewPassword";
+                    var account = new Abstractions.Account
+                    {
+                        AccountId = accountId,
+                        PasswordHash = "SampleHashOne",
+                        Salt = "SampleSaltOne"
+                    };
+
+                    var encryptResultsIndex = 0;
+                    var encryptResults = new List<EncryptResult>
+                    {
+                            new EncryptResult
+                            {
+                                Hash = "SampleHashOne",
+                                Salt = "SampleSaltOne"
+                            },
+                            new EncryptResult
+                            {
+                                Hash = "SampleHashTwo",
+                                Salt = "SampleSaltTwo"
+                            }
+                    };
+
+                    var accountDBServiceMock = serviceProvider.GetMock<IAccountDBService>();
+                    accountDBServiceMock
+                        .Setup
+                        (
+                            accountDBService => accountDBService.SelectAccountByAccountIdAsync
+                            (
+                                It.IsAny<int>()
+                            )
+                        )
+                        .ReturnsAsync
+                        (
+                            account
+                        );
+
+                    var passwordEncryptionServiceMock = serviceProvider.GetMock<IPasswordEncryptionService>();
+                    passwordEncryptionServiceMock
+                    .Setup
+                    (
+                        encryptionService => encryptionService.Encrypt
+                        (
+                            It.IsAny<string>(),
+                            It.IsAny<string>()
+                        )
+                    )
+                    .Returns
+                    (
+                        () =>
+                        {
+                            var result = encryptResults[encryptResultsIndex];
+                            encryptResultsIndex++;
+                            return result;
+                        });
+
+
+                    accountDBServiceMock
+                    .Setup
+                    (
+                        accountDBService => accountDBService.UpdatePasswordAsync
+                        (
+                            It.IsAny<int>(),
+                            It.IsAny<string>(),
+                            It.IsAny<string>()
+                        )
+                    )
+                    .Returns(Task.CompletedTask);
+
+                    //Act
+                    var observed = await uutConcrete.UpdatePasswordAsync(accountId, existingPassword, newPassword);
+
+                    //Assert
+                    Assert.AreEqual(UpdatePasswordResult.Successful, observed);
+                },
+                serviceCollection => ConfigureServices(serviceCollection)
+            );
+        }
+
+
+        #endregion
+
+        #region ResetPasswordAsync
+
+        [TestMethod]
+        public async Task ResetPasswordAsync_Runs_CallsSelectAccountByAccountIdAsync()
+        {
+            await RunDependencyInjectedTestAsync
+            (
+                async (serviceProvider) =>
+                {
+                    //Setup
+                    var uut = serviceProvider.GetRequiredService<IAccountManager>();
+                    var uutConcrete = (AccountManager)uut;
+                    var token = "SampleToken";
+                    string newPassword = "SampleNewPassword";
+                    var accountDBServiceMock = serviceProvider.GetMock<IAccountDBService>();
+                    var accountId = (int?)null;
+
+                    accountDBServiceMock
+                    .Setup
+                    (
+                        accountDBService => accountDBService.SelectAccountIdFromPasswordResetTokenAsync
+                        (
+                            It.IsAny<string>()
+                        )
+                    )
+                    .ReturnsAsync
+                    (
+                        accountId
+                    );
+
+                    //Act
+                    var observed = await uutConcrete.ResetPasswordAsync(token, newPassword);
+
+                    //Assert
+                    accountDBServiceMock
+                    .Verify
+                    (
+                        accountDBService => accountDBService.SelectAccountIdFromPasswordResetTokenAsync
+                        (
+                            token
+                        ),
+                        Times.Once
+                    );
+                },
+                serviceCollection => ConfigureServices(serviceCollection)
+            );
+        }
+
+        [TestMethod]
+        public async Task ResetPasswordAsync_TokenIsInvaild_ReturnsTokenInvaild()
+        {
+            await RunDependencyInjectedTestAsync
+            (
+                async (serviceProvider) =>
+                {
+                    //Setup
+                    var uut = serviceProvider.GetRequiredService<IAccountManager>();
+                    var uutConcrete = (AccountManager)uut;
+                    var token = "SampleToken";
+                    string newPassword = "SampleNewPassword";
+                    var accountDBServiceMock = serviceProvider.GetMock<IAccountDBService>();
+                    var accountId = (int?)null;
+
+                    accountDBServiceMock
+                    .Setup
+                    (
+                        accountDBService => accountDBService.SelectAccountIdFromPasswordResetTokenAsync
+                        (
+                            It.IsAny<string>()
+                        )
+                    )
+                    .ReturnsAsync
+                    (
+                        accountId
+                    );
+
+                    //Act
+                    var observed = await uutConcrete.ResetPasswordAsync(token, newPassword);
+
+                    //Assert
+                    Assert.AreEqual(ResetPasswordResult.TokenInvaild, observed);
+                },
+                serviceCollection => ConfigureServices(serviceCollection)
+            );
+        }
+
+        [TestMethod]
+        public async Task ResetPasswordAsync_AccountSelected_CallEncryptNewPassword()
+        {
+            await RunDependencyInjectedTestAsync
+            (
+                async (serviceProvider) =>
+                {
+                    //Setup
+                    var uut = serviceProvider.GetRequiredService<IAccountManager>();
+                    var uutConcrete = (AccountManager)uut;
+                    var token = "SampleToken";
+                    var accountId = 1;
+                    string newPassword = "SampleNewPassword";
+                    var encryptResult = new EncryptResult
+                    {
+                        Hash = "SampleHash",
+                        Salt = "SampleSalt"
+                    };
+                    var passwordObserved = (string)null;
+                    var hashObserved = (string)null;
+
+                    var accountDBServiceStub = serviceProvider.GetMock<IAccountDBService>();
+                    accountDBServiceStub
+                        .Setup
+                        (
+                            accountDBService => accountDBService.SelectAccountIdFromPasswordResetTokenAsync
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .ReturnsAsync
+                        (
+                            accountId
+                        );
+
+                    var passwordEncryptionServiceMock = serviceProvider.GetMock<IPasswordEncryptionService>();
+                    passwordEncryptionServiceMock
+                        .Setup
+                        (
+                            passwordEncryptionService => passwordEncryptionService.Encrypt
+                            (
+                                It.IsAny<string>(),
+                                It.IsAny<string>()
+                            )
+                        )
+                        .Callback((string password, string hash) =>
+                        {
+                            passwordObserved = password;
+                            hashObserved = hash;
+                        })
+                        .Returns
+                        (
+                            encryptResult
+                        );
+
+                    accountDBServiceStub
+                    .Setup
+                    (
+                        accountDBService => accountDBService.UpdatePasswordAsync
+                        (
+                            It.IsAny<int>(),
+                            It.IsAny<string>(),
+                            It.IsAny<string>()
+                        )
+                    )
+                    .Returns(Task.CompletedTask);
+
+                    //Act
+                    var observed = await uutConcrete.ResetPasswordAsync(token, newPassword);
+
+                    //Assert
+                    passwordEncryptionServiceMock
+                    .Verify(
+                        passwordEncryptionService => passwordEncryptionService.Encrypt
+                        (
+                            passwordObserved,
+                            hashObserved
+                        ),
+                        Times.Once
+                    );
+
+                    Assert.AreEqual(newPassword, passwordObserved);
+                    Assert.IsNull(null, hashObserved);
+                },
+                serviceCollection => ConfigureServices(serviceCollection)
+            );
+        }
+
+        [TestMethod]
+        public async Task ResetPasswordAsync_AccountSelected_CallUpdatePassword()
+        {
+            await RunDependencyInjectedTestAsync
+            (
+                async (serviceProvider) =>
+                {
+                    //Setup
+                    var uut = serviceProvider.GetRequiredService<IAccountManager>();
+                    var uutConcrete = (AccountManager)uut;
+                    var token = "SampleToken";
+                    var accountId = 1;
+                    string newPassword = "SampleNewPassword";
+                    var encryptResult = new EncryptResult
+                    {
+                        Hash = "SampleHash",
+                        Salt = "SampleSalt"
+                    };
+
+                    var accountIdObserved = (int?)null;
+                    var passwordHashObserved = (string)null;
+                    var saltObserved = (string)null;
+
+                    var accountDBServiceMock = serviceProvider.GetMock<IAccountDBService>();
+                    accountDBServiceMock
+                        .Setup
+                        (
+                            accountDBService => accountDBService.SelectAccountIdFromPasswordResetTokenAsync
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .ReturnsAsync
+                        (
+                            accountId
+                        );
+
+                    var passwordEncryptionServiceMock = serviceProvider.GetMock<IPasswordEncryptionService>();
+                    passwordEncryptionServiceMock
+                        .Setup
+                        (
+                            passwordEncryptionService => passwordEncryptionService.Encrypt
+                            (
+                                It.IsAny<string>(),
+                                It.IsAny<string>()
+                            )
+                        )
+                        .Returns
+                        (
+                            encryptResult
+                        );
+
+                    accountDBServiceMock
+                    .Setup
+                    (
+                        accountDBService => accountDBService.UpdatePasswordAsync
+                        (
+                            It.IsAny<int>(),
+                            It.IsAny<string>(),
+                            It.IsAny<string>()
+                        )
+                    )
+                    .Callback((int accountId, string passwordHash, string salt) =>
+                    {
+                        accountIdObserved = accountId;
+                        passwordHashObserved = passwordHash;
+                        saltObserved = salt;
+                    })
+                    .Returns(Task.CompletedTask);
+
+                        //Act
+                        var observed = await uutConcrete.ResetPasswordAsync(token, newPassword);
+
+                        //Assert
+                        accountDBServiceMock
+                        .Verify(
+                            accountDBService => accountDBService.UpdatePasswordAsync
+                            (
+                                accountId,
+                                encryptResult.Hash,
+                                encryptResult.Salt
+                            ),
+                        Times.Once
+                    );
+                },
+                serviceCollection => ConfigureServices(serviceCollection)
+            );
+        }
+
+        [TestMethod]
+        public async Task ResetPasswordAsync_Successful_ReturnsSuccessful()
+        {
+            await RunDependencyInjectedTestAsync
+            (
+                async (serviceProvider) =>
+                {
+                    //Setup
+                    var uut = serviceProvider.GetRequiredService<IAccountManager>();
+                    var uutConcrete = (AccountManager)uut;
+                    var token = "SampleToken";
+                    var accountId = 1;
+                    string newPassword = "SampleNewPassword";
+                    var encryptResult = new EncryptResult
+                    {
+                        Hash = "SampleHash",
+                        Salt = "SampleSalt"
+                    };
+
+                    var accountDBServiceStub = serviceProvider.GetMock<IAccountDBService>();
+                    accountDBServiceStub
+                        .Setup
+                        (
+                            accountDBService => accountDBService.SelectAccountIdFromPasswordResetTokenAsync
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .ReturnsAsync
+                        (
+                            accountId
+                        );
+
+                    var passwordEncryptionServiceMock = serviceProvider.GetMock<IPasswordEncryptionService>();
+                    passwordEncryptionServiceMock
+                        .Setup
+                        (
+                            passwordEncryptionService => passwordEncryptionService.Encrypt
+                            (
+                                It.IsAny<string>(),
+                                It.IsAny<string>()
+                            )
+                        )
+                        .Returns
+                        (
+                            encryptResult
+                        );
+
+                    accountDBServiceStub
+                    .Setup
+                    (
+                        accountDBService => accountDBService.UpdatePasswordAsync
+                        (
+                            It.IsAny<int>(),
+                            It.IsAny<string>(),
+                            It.IsAny<string>()
+                        )
+                    )
+                    .Returns(Task.CompletedTask);
+
+                    //Act
+                    var observed = await uutConcrete.ResetPasswordAsync(token, newPassword);
+
+                    //Assert
+                    Assert.AreEqual(ResetPasswordResult.Successful, observed);
+                },
+                serviceCollection => ConfigureServices(serviceCollection)
+            );
+        }
+
+        #endregion
+
+        #region RequestPasswordResetEmailAsync
+
+        [TestMethod]
+        public async Task RequestPasswordResetEmailAsync_Runs_CallsSelectAccountByEmailAsync()
+        {
+            await RunDependencyInjectedTestAsync
+            (
+                async (serviceProvider) =>
+                {
+                    //Setup
+                    var uut = serviceProvider.GetRequiredService<IAccountManager>();
+                    var uutConcrete = (AccountManager)uut;
+                    var email = (string)null;
+
+                    var accountDBServiceMock = serviceProvider.GetMock<IAccountDBService>();
+
+                    accountDBServiceMock
+                    .Setup
+                    (
+                        accountDBService => accountDBService.SelectAccountByEmailAsync
+                        (
+                            It.IsAny<string>()
+                        )
+                    )
+                    .ReturnsAsync
+                    (
+                        (Abstractions.Account)null
+                    );
+
+                    //Act
+                    var observed = await uutConcrete.RequestPasswordResetEmailAsync(email);
+
+                    //Assert
+                    accountDBServiceMock
+                    .Verify
+                    (
+                        accountDBService => accountDBService.SelectAccountByEmailAsync
+                        (
+                            email
+                        ),
+                        Times.Once
+                    );
+                },
+                serviceCollection => ConfigureServices(serviceCollection)
+            );
+        }
+
+        [TestMethod]
+        public async Task RequestPasswordResetEmailAsync_AccountIsNull_ReturnsEmailNotFound()
+        {
+            await RunDependencyInjectedTestAsync
+            (
+                async (serviceProvider) =>
+                {
+                    //Setup
+                    var uut = serviceProvider.GetRequiredService<IAccountManager>();
+                    var uutConcrete = (AccountManager)uut;
+                    var email = (string)null;
+
+                    var accountDBServiceMock = serviceProvider.GetMock<IAccountDBService>();
+
+                    accountDBServiceMock
+                    .Setup
+                    (
+                        accountDBService => accountDBService.SelectAccountByEmailAsync
+                        (
+                            It.IsAny<string>()
+                        )
+                    )
+                    .ReturnsAsync
+                    (
+                        (Abstractions.Account)null
+                    );
+
+                    //Act
+                    var observed = await uutConcrete.RequestPasswordResetEmailAsync(email);
+
+                    //Assert
+                    Assert.AreEqual(RequestPasswordResetEmailResult.EmailNotFound, observed);
+                },
+                serviceCollection => ConfigureServices(serviceCollection)
+            );
+        }
+
+        [TestMethod]
+        public async Task RequestPasswordResetEmailAsync_EmailActivated_ReturnsEmailActivated()
+        {
+            await RunDependencyInjectedTestAsync
+            (
+                async (serviceProvider) =>
+                {
+                    //Setup
+                    var uut = serviceProvider.GetRequiredService<IAccountManager>();
+                    var uutConcrete = (AccountManager)uut;
+                    var email = (string)null;
+
+                    var accountDBServiceMock = serviceProvider.GetMock<IAccountDBService>();
+
+                    accountDBServiceMock
+                        .Setup
+                        (
+                            accountDBService => accountDBService.SelectAccountByEmailAsync
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .ReturnsAsync
+                        (
+                            new Abstractions.Account
+                            {
+                                Username = "",
+                                EmailActivated = false
+                            }
+                        );
+
+                    var guidServiceMock = serviceProvider.GetMock<IGuidService>();
+
+                    guidServiceMock
+                        .Setup
+                        (
+                            guidService => guidService.NewGuid()
+                        )
+                        .Returns
+                        (
+                           new System.Guid()
+                        );
+
+                    accountDBServiceMock
+                      .Setup
+                      (
+                          accountDBService => accountDBService.InsertPasswordResetTokenAsync
+                          (
+                              It.IsAny<int>(),
+                              It.IsAny<string>()
+                          )
+                      )
+                      .Returns(Task.CompletedTask);
+
+                    //Act
+                    var observed = await uutConcrete.RequestPasswordResetEmailAsync(email);
+
+                    //Assert
+                    Assert.AreEqual(RequestPasswordResetEmailResult.EmailNotActivated, observed);
+                },
+                serviceCollection => ConfigureServices(serviceCollection)
+            );
+        }
+
+        [TestMethod]
+        public async Task RequestPasswordResetEmailAsync_EmailPreferenceNone_ReturnsNoEmailSentDueToEmailPreference()
+        {
+            await RunDependencyInjectedTestAsync
+            (
+                async (serviceProvider) =>
+                {
+                    //Setup
+                    var uut = serviceProvider.GetRequiredService<IAccountManager>();
+                    var uutConcrete = (AccountManager)uut;
+                    var email = (string)null;
+
+                    var accountDBServiceMock = serviceProvider.GetMock<IAccountDBService>();
+
+                    accountDBServiceMock
+                        .Setup
+                        (
+                            accountDBService => accountDBService.SelectAccountByEmailAsync
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .ReturnsAsync
+                        (
+                            new Abstractions.Account
+                            {
+                                Username = "",
+                                EmailActivated = true,
+                                EmailPreference = EmailPreference.None
+                            }
+                        );
+
+                    var guidServiceMock = serviceProvider.GetMock<IGuidService>();
+
+                    guidServiceMock
+                        .Setup
+                        (
+                            guidService => guidService.NewGuid()
+                        )
+                        .Returns
+                        (
+                           new System.Guid()
+                        );
+
+                    accountDBServiceMock
+                      .Setup
+                      (
+                          accountDBService => accountDBService.InsertPasswordResetTokenAsync
+                          (
+                              It.IsAny<int>(),
+                              It.IsAny<string>()
+                          )
+                      )
+                      .Returns(Task.CompletedTask);
+
+                    //Act
+                    var observed = await uutConcrete.RequestPasswordResetEmailAsync(email);
+
+                    //Assert
+                    Assert.AreEqual(RequestPasswordResetEmailResult.NoEmailSentDueToEmailPreference, observed);
+                },
+                serviceCollection => ConfigureServices(serviceCollection)
+            );
+        }
+
+        [TestMethod]
+        public async Task RequestPasswordResetEmailAsync_AccountExist_NewGuidCalled()
+        {
+            await RunDependencyInjectedTestAsync
+            (
+                async (serviceProvider) =>
+                {
+                    //Setup
+                    var uut = serviceProvider.GetRequiredService<IAccountManager>();
+                    var uutConcrete = (AccountManager)uut;
+                    var email = (string)null;
+
+                    var accountDBServiceMock = serviceProvider.GetMock<IAccountDBService>();
+
+                    accountDBServiceMock
+                        .Setup
+                        (
+                            accountDBService => accountDBService.SelectAccountByEmailAsync
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .ReturnsAsync
+                        (
+                            new Abstractions.Account
+                            {
+                                Username = "",
+                                EmailActivated = true,
+                                EmailPreference = EmailPreference.Any
+                            }
+                        );
+
+                    var guidServiceMock = serviceProvider.GetMock<IGuidService>();
+
+                    guidServiceMock
+                        .Setup
+                        (
+                            guidService => guidService.NewGuid()
+                        )
+                        .Returns
+                        (
+                           new System.Guid()
+                        );
+
+                    accountDBServiceMock
+                      .Setup
+                      (
+                          accountDBService => accountDBService.InsertPasswordResetTokenAsync
+                          (
+                              It.IsAny<int>(),
+                              It.IsAny<string>()
+                          )
+                      )
+                      .Returns(Task.CompletedTask);
+
+                    //Act
+                    var observed = await uutConcrete.RequestPasswordResetEmailAsync(email);
+
+                    //Assert
+                    guidServiceMock
+                    .Verify(
+                        guidService => guidService.NewGuid(),
+                        Times.Once
+                    );
+                },
+                serviceCollection => ConfigureServices(serviceCollection)
+            );
+        }
+
+        [TestMethod]
+        public async Task RequestPasswordResetEmailAsync_AccountExist_InsertPasswordResetTokenAsyncCalled()
+        {
+            await RunDependencyInjectedTestAsync
+            (
+                async (serviceProvider) =>
+                {
+                    //Setup
+                    var uut = serviceProvider.GetRequiredService<IAccountManager>();
+                    var uutConcrete = (AccountManager)uut;
+                    var email = (string)null;
+                    var expectedAccount = new Abstractions.Account
+                    {
+                        AccountId = 1,
+                        ActivateEmailToken = Guid.NewGuid(),
+                        EmailPreferenceToken = Guid.NewGuid(),
+                        Username = "",
+                        EmailActivated = true,
+                        EmailPreference = EmailPreference.Any
+                    };
+                    var expectedGuid = Guid.NewGuid();
+                    var accountDBServiceMock = serviceProvider.GetMock<IAccountDBService>();
+
+                    accountDBServiceMock
+                        .Setup
+                        (
+                            accountDBService => accountDBService.SelectAccountByEmailAsync
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .ReturnsAsync
+                        (
+                            expectedAccount
+                        );
+
+                    var guidServiceStub = serviceProvider.GetMock<IGuidService>();
+
+                    guidServiceStub
+                    .Setup
+                    (
+                        guidService => guidService.NewGuid()
+                    )
+                    .Returns
+                    (
+                        expectedGuid
+                    );
+
+                    accountDBServiceMock
+                    .Setup
+                    (
+                        accountDBService => accountDBService.InsertPasswordResetTokenAsync
+                        (
+                            It.IsAny<int>(),
+                            It.IsAny<string>()
+                        )
+                    )
+                    .Returns(Task.CompletedTask);
+
+                    //Act
+                    var observed = await uutConcrete.RequestPasswordResetEmailAsync(email);
+
+                    //Assert
+                    accountDBServiceMock
+                    .Verify
+                    (
+                        accountDBService => accountDBService.InsertPasswordResetTokenAsync
+                        (
+                            expectedAccount.AccountId,
+                            expectedGuid.ToString()
+                        ),
+                        Times.Once
+                    );
+
+                },
+                serviceCollection => ConfigureServices(serviceCollection)
+            );
+        }
+
+        [TestMethod]
+        public async Task RequestPasswordResetEmailAsync_Successful_SendPasswordResetEmail()
+        {
+            await RunDependencyInjectedTestAsync
+            (
+                async (serviceProvider) =>
+                {
+                    //Setup
+                    var uut = serviceProvider.GetRequiredService<IAccountManager>();
+                    var uutConcrete = (AccountManager)uut;
+                    var email = (string)null;
+                    var expectedAccount = new Abstractions.Account
+                    {
+                        AccountId = 1,
+                        ActivateEmailToken = Guid.NewGuid(),
+                        EmailPreferenceToken = Guid.NewGuid(),
+                        Username = "",
+                        EmailActivated = true,
+                        EmailPreference = EmailPreference.Any
+                    };
+                    var passwordResetToken = new Guid("15d5f597-bcbe-463c-9706-adc33cbacbf8");
+                    var accountDBServiceMock = serviceProvider.GetMock<IAccountDBService>();
+                    accountDBServiceMock
+                        .Setup
+                        (
+                            accountDBService => accountDBService.SelectAccountByEmailAsync
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .ReturnsAsync
+                        (
+                            expectedAccount
+                        );
+
+                    var guidServiceStub = serviceProvider.GetMock<IGuidService>();
+
+                    guidServiceStub
+                        .Setup
+                        (
+                            guidService => guidService.NewGuid()
+                        )
+                        .Returns
+                        (
+                           passwordResetToken
+                        );
+
+                    accountDBServiceMock
+                      .Setup
+                      (
+                          accountDBService => accountDBService.InsertPasswordResetTokenAsync
+                          (
+                              It.IsAny<int>(),
+                              It.IsAny<string>()
+                          )
+                      )
+                      .Returns(Task.CompletedTask);
+
+                    var accountEmailServiceMock = serviceProvider.GetMock<IAccountEmailService>();
+
+                    accountEmailServiceMock
+                        .Setup
+                        (
+                            emailService => emailService.SendPasswordResetEmailAsync
+                            (
+                                It.IsAny<string>(),
+                                It.IsAny<string>(),
+                                It.IsAny<string>()
+                            )
+                        );
+
+
+
+                    //Act
+                    var observed = await uutConcrete.RequestPasswordResetEmailAsync(email);
+
+                    //Assert
+                    accountEmailServiceMock
+                    .Verify
+                    (
+                        emailService => emailService.SendPasswordResetEmailAsync
+                        (
+                            expectedAccount.Email,
+                            passwordResetToken.ToString(),
+                            expectedAccount.EmailPreferenceToken.ToString()
+                        ),
+                        Times.Once
+                    );
+
+                },
+                serviceCollection => ConfigureServices(serviceCollection)
+            );
+        }
+
+        [TestMethod]
+        public async Task RequestPasswordResetEmailAsync_Successful_ReturnsSuccessful()
+        {
+            await RunDependencyInjectedTestAsync
+            (
+                async (serviceProvider) =>
+                {
+                    //Setup
+                    var uut = serviceProvider.GetRequiredService<IAccountManager>();
+                    var uutConcrete = (AccountManager)uut;
+                    var email = (string)null;
+                    var expectedAccount = new Abstractions.Account
+                    {
+                        AccountId = 1,
+                        ActivateEmailToken = Guid.NewGuid(),
+                        EmailPreferenceToken = Guid.NewGuid(),
+                        Username = "",
+                        EmailActivated = true,
+                        EmailPreference = EmailPreference.Any
+                    };
+                    var expectedGuid = new Guid("15d5f597-bcbe-463c-9706-adc33cbacbf8");
+                    var accountDBServiceStub = serviceProvider.GetMock<IAccountDBService>();
+
+                    accountDBServiceStub
+                        .Setup
+                        (
+                            accountDBService => accountDBService.SelectAccountByEmailAsync
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .ReturnsAsync
+                        (
+                            expectedAccount
+                        );
+
+                    var guidServiceStub = serviceProvider.GetMock<IGuidService>();
+
+                    guidServiceStub
+                        .Setup
+                        (
+                            guidService => guidService.NewGuid()
+                        )
+                        .Returns
+                        (
+                           expectedGuid
+                        );
+
+                    accountDBServiceStub
+                      .Setup
+                      (
+                          accountDBService => accountDBService.InsertPasswordResetTokenAsync
+                          (
+                              It.IsAny<int>(),
+                              It.IsAny<string>()
+                          )
+                      )
+                      .Returns(Task.CompletedTask);
+
+                    var accountEmailServiceMock = serviceProvider.GetMock<IAccountEmailService>();
+
+                    accountEmailServiceMock
+                    .Setup
+                    (
+                        emailService => emailService.SendPasswordResetEmailAsync
+                        (
+                            It.IsAny<string>(),
+                            It.IsAny<string>(),
+                            It.IsAny<string>()
+                        )
+                    );
+
+                    //Act
+                    var observed = await uutConcrete.RequestPasswordResetEmailAsync(email);
+
+                    //Assert
+                    Assert.AreEqual(RequestPasswordResetEmailResult.Successful, observed);
+                },
+                serviceCollection => ConfigureServices(serviceCollection)
+            );
+        }
+
+
+        #endregion
         #region Helpers
 
         private IServiceCollection ConfigureServices(IServiceCollection serviceCollection)

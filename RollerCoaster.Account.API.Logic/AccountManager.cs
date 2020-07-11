@@ -7,6 +7,7 @@ using RollerCoaster.Account.API.Infrastructure.AccountDB.Models;
 using RollerCoaster.Account.API.Infrastructure.AccountEmail;
 using RollerCoaster.Account.API.Infrastructure.PasswordEncryption;
 using RollerCoaster.Account.API.Logic.Models;
+using System;
 using System.Threading.Tasks;
 namespace RollerCoaster.Account.API.Logic
 {
@@ -66,7 +67,7 @@ namespace RollerCoaster.Account.API.Logic
 
             if (email != null)
             {
-                await _accountEmailService.SendActivateEmailAsync(email, username, activateEmailToken, emailPreferenceToken);
+                await _accountEmailService.SendActivateEmailAsync(email, username, activateEmailToken, emailPreferenceToken).ConfigureAwait(false);
             }
 
             createAccountDescriptor.Result = CreateUserAccountResult.Successful;
@@ -113,7 +114,7 @@ namespace RollerCoaster.Account.API.Logic
 
             if (email != null)
             {
-                await _accountEmailService.SendActivateEmailAsync(email, username, activateEmailToken, emailPreferenceToken);
+                await _accountEmailService.SendActivateEmailAsync(email, username, activateEmailToken, emailPreferenceToken).ConfigureAwait(false);
             }
 
             createAccountDescriptor.Result = CreateAdminAccountResult.Successful;
@@ -125,8 +126,7 @@ namespace RollerCoaster.Account.API.Logic
         {
             var loginDescriptor = new LoginDescriptor();
 
-            var selectAccountByUserNameRequest = new SelectAccountByUserNameRequest { Username = username };
-            var account = await _accountDBService.SelectAccountByUserNameAsync(selectAccountByUserNameRequest);
+            var account = await _accountDBService.SelectAccountByUserNameAsync(username).ConfigureAwait(false);
 
             if (account == null)
             {
@@ -146,7 +146,7 @@ namespace RollerCoaster.Account.API.Logic
             {
                 loginDescriptor.Result = LoginResult.InvaildPassword;
 
-                await _accountDBService.InsertPasswordAttemptFailedAsync(new InsertPasswordAttemptFailedRequest { AccountId = account.AccountId});
+                await _accountDBService.InsertPasswordAttemptFailedAsync(account.AccountId).ConfigureAwait(false);
 
                 return loginDescriptor;
             }
@@ -160,27 +160,13 @@ namespace RollerCoaster.Account.API.Logic
 
         public async Task UpdateEmailPreferenceAsync(int accountId, EmailPreference emailPreference)
         {
-            await _accountDBService.UpdateEmailPreferenceAsync
-            (
-                new Infrastructure.AccountDB.Models.UpdateEmailPreferenceRequest 
-                { 
-                    AccountId = accountId,
-                    EmailPreference = emailPreference 
-                }
-            );
+            await _accountDBService.UpdateEmailPreferenceAsync(accountId, emailPreference).ConfigureAwait(false);
         }
 
         public async Task<Abstractions.UpdateEmailPreferenceWithTokenResult> UpdateEmailPreferenceWithTokenAsync(string token, EmailPreference emailPreference)
         {
-            var updateEmailPreferenceWithTokenResult = 
-                await _accountDBService.UpdateEmailPreferenceWithTokenAsync
-                      (
-                          new Infrastructure.AccountDB.Models.UpdateEmailPreferenceWithTokenRequest 
-                          {  
-                              EmailPreferenceToken = token,
-                              EmailPreference = emailPreference
-                          }
-                      );
+            var updateEmailPreferenceWithTokenResult =
+                await _accountDBService.UpdateEmailPreferenceWithTokenAsync(token.ToString(), emailPreference).ConfigureAwait(false);
 
             if (!updateEmailPreferenceWithTokenResult.VaildToken)
             {
@@ -188,6 +174,97 @@ namespace RollerCoaster.Account.API.Logic
             }
 
             return Abstractions.UpdateEmailPreferenceWithTokenResult.Successful;
+        }
+
+        public async Task<ActivateEmailResult> ActivateEmailAsync(string token)
+        {
+            var activateEmailWithTokenResult = await _accountDBService.ActivateEmailWithTokenAsync(token).ConfigureAwait(false);
+
+            if (!activateEmailWithTokenResult.VaildToken)
+            {
+                return ActivateEmailResult.InvaildToken;
+            }
+
+            if (activateEmailWithTokenResult.EmailWasAlreadyActivated)
+            {
+                return ActivateEmailResult.EmailWasAlreadyActivated;
+            }
+
+            return ActivateEmailResult.Successful;
+        }
+
+        public async Task<UpdatePasswordResult> UpdatePasswordAsync(int accountId, string existingPassword, string newPassword)
+        {
+            var account = await _accountDBService.SelectAccountByAccountIdAsync(accountId).ConfigureAwait(false);
+
+            if (account == null)
+            {
+                return UpdatePasswordResult.AccountNotFound;
+            }
+
+            if (account.Locked)
+            {
+                return UpdatePasswordResult.AccountLocked;
+            }
+
+            var encryptResult = _passwordEncryptionService.Encrypt(existingPassword, account.Salt);
+
+            if (account.PasswordHash != encryptResult.Hash)
+            {
+                await _accountDBService.InsertPasswordAttemptFailedAsync(accountId).ConfigureAwait(false);
+
+                return UpdatePasswordResult.InvaildExistingPassword;
+            }
+
+            var newEncryptResult = _passwordEncryptionService.Encrypt(newPassword);
+
+            await _accountDBService.UpdatePasswordAsync(account.AccountId, newEncryptResult.Hash, newEncryptResult.Salt).ConfigureAwait(false);
+
+            return UpdatePasswordResult.Successful;
+        }
+
+        public async Task<ResetPasswordResult> ResetPasswordAsync(string token, string newPassword)
+        {
+            var accountId = await _accountDBService.SelectAccountIdFromPasswordResetTokenAsync(token).ConfigureAwait(false);
+
+            if (accountId == null)
+            {
+                return ResetPasswordResult.TokenInvaild;
+            }
+
+            var newEncryptResult = _passwordEncryptionService.Encrypt(newPassword);
+
+            await _accountDBService.UpdatePasswordAsync((int)accountId, newEncryptResult.Hash, newEncryptResult.Salt).ConfigureAwait(false);
+
+            return ResetPasswordResult.Successful;
+        }
+
+        public async Task<RequestPasswordResetEmailResult> RequestPasswordResetEmailAsync(string email)
+        {
+            var account = await _accountDBService.SelectAccountByEmailAsync(email).ConfigureAwait(false);
+
+            if (account == null)
+            {
+                return RequestPasswordResetEmailResult.EmailNotFound;
+            }
+
+            if (!account.EmailActivated)
+            {
+                return RequestPasswordResetEmailResult.EmailNotActivated;
+            }
+
+            if (account.EmailPreference == EmailPreference.None)
+            {
+                return RequestPasswordResetEmailResult.NoEmailSentDueToEmailPreference;
+            }
+
+            string passwordResetToken = _guidService.NewGuid().ToString();
+            await _accountDBService.InsertPasswordResetTokenAsync(account.AccountId, passwordResetToken).ConfigureAwait(false);
+
+            await _accountEmailService.SendPasswordResetEmailAsync(account.Email, passwordResetToken, account.EmailPreferenceToken.ToString())
+            .ConfigureAwait(false);
+
+            return RequestPasswordResetEmailResult.Successful;
         }
     }
 }

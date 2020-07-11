@@ -6,10 +6,17 @@ namespace RollerCoaster.Account.API.Infrastructure.AccountDB
 {
     public interface IAccountDBService
     {
+        Task<ActivateEmailWithTokenResult> ActivateEmailWithTokenAsync(string activateEmailToken);
         Task<InsertAccountResult> InsertAccountAsync(InsertAccountRequest insertAccountRequest);
-        Task<Abstractions.Account> SelectAccountByUserNameAsync(SelectAccountByUserNameRequest selectAccountByUserNameRequest);
-        Task InsertPasswordAttemptFailedAsync(InsertPasswordAttemptFailedRequest insertPasswordAttemptFailedRequest);
-        Task UpdateEmailPreferenceAsync(Models.UpdateEmailPreferenceRequest updateEmailPreferenceRequest);
-        Task<Models.UpdateEmailPreferenceWithTokenResult> UpdateEmailPreferenceWithTokenAsync(Models.UpdateEmailPreferenceWithTokenRequest updateEmailPreferenceWithTokenRequest);
+        Task InsertPasswordResetTokenAsync(int accountId, string passwordResetToken);
+        Task<Abstractions.Account> SelectAccountByAccountIdAsync(int accountId);
+        Task<Abstractions.Account> SelectAccountByEmailAsync(string email);
+        Task<Abstractions.Account> SelectAccountByUserNameAsync(string username);
+        Task<int?> SelectAccountIdFromPasswordResetTokenAsync(string passwordResetToken);
+        Task UpdateEmailPreferenceAsync(int accountId, EmailPreference emailPreference);
+        Task<Models.UpdateEmailPreferenceWithTokenResult> UpdateEmailPreferenceWithTokenAsync(string emailPreferenceToken, EmailPreference emailPreference);
+        Task UpdatePasswordAsync(int accountId, string passwordHash, string salt);
+        Task InsertPasswordAttemptFailedAsync(int accountId);
+     
     }
 }

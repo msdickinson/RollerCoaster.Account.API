@@ -11,5 +11,9 @@ namespace RollerCoaster.Account.API.Logic
         Task<LoginDescriptor> LoginAsync(string username, string password);
         Task UpdateEmailPreferenceAsync(int accountId, EmailPreference emailPreference);
         Task<UpdateEmailPreferenceWithTokenResult> UpdateEmailPreferenceWithTokenAsync(string token, EmailPreference emailPreference);
+        Task<ActivateEmailResult> ActivateEmailAsync(string token);
+        Task<UpdatePasswordResult> UpdatePasswordAsync(int accountId, string existingPassword, string newPassword);
+        Task<ResetPasswordResult> ResetPasswordAsync(string token, string newPassword);
+        Task<RequestPasswordResetEmailResult> RequestPasswordResetEmailAsync(string email);
     }
 }
