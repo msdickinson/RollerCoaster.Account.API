@@ -162,7 +162,6 @@ namespace RollerCoaster.Account.API.View.Controllers
                 return StatusCode(401);
             }
 
-            //TODO: Not Adding Failed Attempt to DB, This wont fire.
             if (loginDescriptor.Result == LoginResult.AccountLocked)
             {
                 return StatusCode(403);

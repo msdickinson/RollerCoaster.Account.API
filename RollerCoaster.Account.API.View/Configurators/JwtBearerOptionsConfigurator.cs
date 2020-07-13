@@ -7,7 +7,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography.X509Certificates;
 
-namespace RollerCoaster.Account.API.View.Services
+namespace RollerCoaster.Account.API.View.Configurators
 {
     [ExcludeFromCodeCoverage]
     public class JwtBearerOptionsConfigurator : IConfigureNamedOptions<JwtBearerOptions>

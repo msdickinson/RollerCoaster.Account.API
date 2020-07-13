@@ -7,7 +7,7 @@ using RollerCoaster.Acccount.API.View.Models;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace RollerCoaster.Account.API.View.Services
+namespace RollerCoaster.Account.API.View.Configurators
 {
     [ExcludeFromCodeCoverage]
     public class EmailServiceOptionsConfigurator : IConfigureOptions<EmailServiceOptions>

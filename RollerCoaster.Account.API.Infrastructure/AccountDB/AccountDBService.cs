@@ -108,8 +108,6 @@ namespace RollerCoaster.Account.API.Infrastructure.AccountDB
                   );
         }
 
-
-        //TODO: THIS IS not Giving a Default. Or its crashing in SQL.
         public async Task<int?> SelectAccountIdFromPasswordResetTokenAsync(string passwordResetToken)
         {
             return await _sqlService

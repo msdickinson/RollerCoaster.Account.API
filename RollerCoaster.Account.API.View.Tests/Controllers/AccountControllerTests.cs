@@ -1532,9 +1532,6 @@ namespace RollerCoaster.Account.API.View.Tests.Controllers
                        new Claim(ClaimTypes.NameIdentifier.ToString(), expectedUserId.ToString())
                     };
 
-                    var resetPasswordResult = ResetPasswordResult.TokenInvaild;
-
-
                     var uut = serviceProvider.GetControllerInstance<AccountController>(claims);
 
                     //Act

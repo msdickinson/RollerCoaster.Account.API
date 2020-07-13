@@ -30,8 +30,8 @@ using RollerCoaster.Account.API.Infrastructure.AccountEmail;
 using RollerCoaster.Account.API.Infrastructure.PasswordEncryption;
 using RollerCoaster.Account.API.Logic;
 using RollerCoaster.Account.API.Logic.Models;
+using RollerCoaster.Account.API.View.Configurators;
 using RollerCoaster.Account.API.View.Models;
-using RollerCoaster.Account.API.View.Services;
 using Serilog;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -140,7 +140,7 @@ namespace RollerCoaster.Acccount.API.View
         {
             services.AddSwaggerGen(options =>
             {
-                options.SwaggerDoc("v1", new OpenApiInfo { Title = "A API", Version = "1" });
+                options.SwaggerDoc("v1", new OpenApiInfo { Title = "Account API", Version = "1" });
                 options.DocInclusionPredicate((version, apiDescription) =>
                 {
                     var apiVersionAttribute =
