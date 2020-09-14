@@ -28,6 +28,7 @@ namespace RollerCoaster.Account.API.View.Controllers
         internal const string BEARER_TOKEN_TYPE = "Bearer";
         internal const string EMAIL_NOT_ACTIVATED_MESSAGE = "Email Not Activated";
         internal const string NO_EMAIL_SENT_DUE_TO_EMAIL_PERFERENCEMESSAGE = "No Email Sent Due To Email Preference";
+        internal const string EMAIL_HAS_ALREADY_BEEN_ACTIVATED = "Email has already been activated";
 
         internal readonly IDateTimeService _dateTimeService;
         internal readonly IAccountManager _accountManager;

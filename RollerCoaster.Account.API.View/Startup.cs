@@ -1,3 +1,4 @@
+using DickinsonBros.DataTable.Extensions;
 using DickinsonBros.DateTime.Extensions;
 using DickinsonBros.Email.Extensions;
 using DickinsonBros.Email.Models;
@@ -6,6 +7,8 @@ using DickinsonBros.Encryption.Certificate.Models;
 using DickinsonBros.Encryption.JWT.Extensions;
 using DickinsonBros.Encryption.JWT.Models;
 using DickinsonBros.Guid.Extensions;
+using DickinsonBros.Logger;
+using DickinsonBros.Logger.Abstractions;
 using DickinsonBros.Logger.Extensions;
 using DickinsonBros.Middleware;
 using DickinsonBros.Redactor.Extensions;
@@ -82,9 +85,16 @@ namespace RollerCoaster.Acccount.API.View
             //Add Stopwatch Service
             services.AddStopwatchService();
 
+            //Add DataTable
+            services.AddDataTableService();
+
+            //Add MemoryCatche
+            services.AddMemoryCache();
+
             //Add Logging Service
-            services.AddLoggingService();
- 
+            services.AddSingleton(typeof(ILoggingService<>), typeof(LoggingService<>));
+            services.AddSingleton<ICorrelationService, CorrelationService>();
+
             //Add Redactor Service
             services.AddRedactorService();
             services.Configure<RedactorServiceOptions>(Configuration.GetSection(nameof(RedactorServiceOptions)));
@@ -129,8 +139,7 @@ namespace RollerCoaster.Acccount.API.View
 
             //Add             
             services.AddSingleton<IAccountManager, AccountManager>();
-            services.Configure<AdminOptions>(Configuration.GetSection(nameof(AdminOptions)));
-
+            services.AddTransient<IConfigureOptions<AdminOptions>, AdminOptionsConfigurator>();
             services.AddSingleton<IAccountEmailService, AccountEmailService>();
             services.AddSingleton<IPasswordEncryptionService, PasswordEncryptionService>();
             services.AddSingleton<IAccountDBService, AccountDBService>();

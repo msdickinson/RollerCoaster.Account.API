@@ -181,10 +181,14 @@ namespace RollerCoaster.Account.API.View.Tests.Controllers
                     var uut = serviceProvider.GetControllerInstance<AccountController>();
 
                     //Act
-                    var observed = await uut.ActivateEmailAsync(activateEmailRequest) as StatusCodeResult;
-
+                    var observed = await uut.ActivateEmailAsync(activateEmailRequest).ConfigureAwait(false);  
+                    
                     //Assert
-                    Assert.AreEqual(400, observed.StatusCode);
+                    Assert.IsInstanceOfType(observed, typeof(ObjectResult));
+                    var observedObjectResult = observed as ObjectResult;
+
+                    Assert.AreEqual(400, observedObjectResult.StatusCode);
+                    Assert.AreEqual(AccountController.EMAIL_HAS_ALREADY_BEEN_ACTIVATED, observedObjectResult.Value);
                 },
                 serviceCollection => ConfigureServices(serviceCollection)
             );
