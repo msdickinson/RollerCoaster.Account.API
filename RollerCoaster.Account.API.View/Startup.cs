@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
@@ -26,6 +27,8 @@ using RollerCoaster.Account.API.Logic.Extensions;
 using RollerCoaster.Account.API.View.Configurators;
 using RollerCoaster.Account.API.View.Models;
 using Serilog;
+using Serilog.Sinks.Elasticsearch;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -35,44 +38,43 @@ namespace RollerCoaster.Acccount.API.View
     [ExcludeFromCodeCoverage]
     public class Startup
     {
+        public IConfiguration Configuration { get; }
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
+
 
         public void ConfigureServices(IServiceCollection services)
         {
-            //Configure Appliation
-            services.AddOptions();                                               //[X] 
-            AddControllers(services);                                            //[X]    
-            AddLogging(services);                                                //[ ] 
-            AddVersioning(services);                                             //[X] 
-            AddAuthentication(services);                                         //[ ] 
-            AddSwagger(services);                                                //[X] 
-
             //Add Dickinsonbros Services
-            services.AddGuidService();                                           //[X] 
-            services.AddDateTimeService();                                       //[X] 
-            services.AddStopwatchService();                                      //[X] 
-            services.AddDataTableService();                                      //[X] 
-            services.AddLoggingService();                                        //[X] 
-            services.AddRedactorService();                                       //[X] 
-            services.AddConfigurationEncryptionService();                        //[ ] 
-            services.AddTelemetryService();                                      //[ ] 
-            services.AddSQLService();                                            //[ ] 
-            services.AddEmailService();                                          //[ ] 
-            services.AddJWTService<RollerCoasterJWTServiceOptions>();            //[ ] 
-
-            //Add MemoryCatche
-            services.AddMemoryCache();                                           //[X] 
+            services.AddGuidService();
+            services.AddDateTimeService();
+            services.AddStopwatchService();
+            services.AddDataTableService();
+            services.AddLoggingService();
+            services.AddRedactorService();
+            services.AddConfigurationEncryptionService();
+            services.AddTelemetryService();
+            services.AddSQLService();
+            services.AddEmailService();
+            services.AddJWTService<RollerCoasterJWTServiceOptions>();
 
             //Add Local Services    
-            services.AddAccountManager();                                        //[ ] 
-            services.AddAccountDBService();                                      //[ ] 
-            services.AddPasswordEncryptionService();                             //[ ] 
-            services.AddAccountEmailService();                                   //[ ] 
+            services.AddAccountManager();
+            services.AddAccountDBService();
+            services.AddPasswordEncryptionService();
+            services.AddAccountEmailService();
+
+            //Configure Appliation
+            services.AddOptions();
+            AddControllers(services);
+            AddLogging(services);
+            AddVersioning(services);
+            AddAuthentication(services);
+            AddSwagger(services);
         }
 
         public void AddControllers(IServiceCollection services)
@@ -85,19 +87,29 @@ namespace RollerCoaster.Acccount.API.View
 
         public void AddLogging(IServiceCollection services)
         {
+            services.TryAddSingleton<IConfigureOptions<AWSElasticsearchOptions>, AWSElasticsearchOptionsConfigurator>();
+            
+            var serviceProvider = services.BuildServiceProvider();
+            var awsElasticsearchOptions = serviceProvider.GetService<IOptions<AWSElasticsearchOptions>>().Value;
+
+            Environment.SetEnvironmentVariable("AWS_REGION", awsElasticsearchOptions.AWSRegion);
+
             services.AddLogging(loggingBuilder =>
             {
                 var logger = new LoggerConfiguration()
-                    .ReadFrom.Configuration(Configuration)
-                    .CreateLogger();
+                .ReadFrom.Configuration(Configuration)
+                .Enrich.FromLogContext()
+                .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(awsElasticsearchOptions.URL))
+                {
+                    IndexFormat = awsElasticsearchOptions.IndexFormat,
+                })
+                .CreateLogger();
 
                 loggingBuilder.AddSerilog
                 (
                     logger,
                     dispose: true
                 );
-
-                loggingBuilder.AddConfiguration(Configuration);
             });
         }
 

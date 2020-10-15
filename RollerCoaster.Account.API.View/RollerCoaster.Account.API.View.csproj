@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="A.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="DickinsonBros.DataTable" Version="2.0.1" />
     <PackageReference Include="DickinsonBros.DateTime" Version="3.0.0" />
     <PackageReference Include="DickinsonBros.Email" Version="3.1.0" />
@@ -24,6 +28,7 @@
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="3.1.6" />
     <PackageReference Include="Serilog.AspNetCore" Version="3.4.0" />
     <PackageReference Include="Serilog.Sinks.Async" Version="1.4.0" />
+    <PackageReference Include="Serilog.Sinks.Elasticsearch" Version="8.4.1" />
     <PackageReference Include="Serilog.Sinks.Splunk" Version="3.6.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
     <PackageReference Include="System.Security.Cryptography.Pkcs" Version="4.7.0" />

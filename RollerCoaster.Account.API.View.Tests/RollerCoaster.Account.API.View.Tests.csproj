@@ -19,7 +19,7 @@
 
   <ItemGroup>
     <Folder Include="Models\" />
-    <Folder Include="Services\" />
+    <Folder Include="Configurators\" />
   </ItemGroup>
 
   <ItemGroup>
