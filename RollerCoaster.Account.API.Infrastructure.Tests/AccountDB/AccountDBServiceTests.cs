@@ -1303,8 +1303,8 @@ namespace RollerCoaster.Account.API.Logic.Tests
             serviceCollection.AddSingleton<IAccountDBService, AccountDBService>();
             serviceCollection.AddSingleton(Mock.Of<ISQLService>());
 
-            serviceCollection.AddOptions<RollerCoasterDBOptions>()
-                .Configure((rollerCoasterDBOptions) => rollerCoasterDBOptions.ConnectionString = connectionString);
+            serviceCollection.AddOptions<AccountDBServiceOptions>()
+                .Configure((accountDBServiceOptions) => accountDBServiceOptions.ConnectionString = connectionString);
 
             return serviceCollection;
         }

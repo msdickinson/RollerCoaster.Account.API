@@ -1,13 +1,10 @@
 ﻿using DickinsonBros.Guid.Abstractions;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using RollerCoaster.Account.API.Abstractions;
 using RollerCoaster.Account.API.Infrastructure.AccountDB;
-using RollerCoaster.Account.API.Infrastructure.AccountDB.Models;
 using RollerCoaster.Account.API.Infrastructure.AccountEmail;
 using RollerCoaster.Account.API.Infrastructure.PasswordEncryption;
 using RollerCoaster.Account.API.Logic.Models;
-using System;
 using System.Threading.Tasks;
 namespace RollerCoaster.Account.API.Logic
 {
@@ -17,7 +14,7 @@ namespace RollerCoaster.Account.API.Logic
         internal readonly IAccountDBService _accountDBService;
         internal readonly IPasswordEncryptionService _passwordEncryptionService;
         internal readonly IAccountEmailService _accountEmailService;
-        internal readonly AdminOptions _adminOptions;
+        internal readonly AccountManagerOptions _accountManagerOptions;
 
         public AccountManager
         (
@@ -25,14 +22,14 @@ namespace RollerCoaster.Account.API.Logic
             IAccountDBService accountDBService,
             IPasswordEncryptionService passwordEncryptionService,
             IAccountEmailService accountEmailService,
-            IOptions<AdminOptions> adminOptions
+            IOptions<AccountManagerOptions> accountManagerOptions
         )
         {
             _guidService = guidService;
             _accountDBService = accountDBService;
             _passwordEncryptionService = passwordEncryptionService;
             _accountEmailService = accountEmailService;
-            _adminOptions = adminOptions.Value;
+            _accountManagerOptions = accountManagerOptions.Value;
         }
         public async Task<CreateUserAccountDescriptor> CreateUserAsync(string username, string password, string email)
         {
@@ -75,11 +72,12 @@ namespace RollerCoaster.Account.API.Logic
 
             return createAccountDescriptor;
         }    
+        
         public async Task<CreateAdminAccountDescriptor> CreateAdminAsync(string username, string token, string password, string email)
         {
             var createAccountDescriptor = new CreateAdminAccountDescriptor();
 
-            if (_adminOptions.Token != token)
+            if (_accountManagerOptions.AdminToken != token)
             {
                 createAccountDescriptor.Result = CreateAdminAccountResult.InvaildToken;
                 return createAccountDescriptor;
@@ -122,6 +120,7 @@ namespace RollerCoaster.Account.API.Logic
 
             return createAccountDescriptor;
         }
+       
         public async Task<LoginDescriptor> LoginAsync(string username, string password)
         {
             var loginDescriptor = new LoginDescriptor();

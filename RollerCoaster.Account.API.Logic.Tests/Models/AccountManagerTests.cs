@@ -3747,12 +3747,12 @@ namespace RollerCoaster.Account.API.Logic.Tests.Models
             serviceCollection.AddSingleton(Mock.Of<IPasswordEncryptionService>());
             serviceCollection.AddSingleton(Mock.Of<IAccountEmailService>());
 
-            var adminOptions = new AdminOptions
+            var accountManagerOptions = new AccountManagerOptions
             {
-                Token = ADMIN_TOKEN
+                AdminToken = ADMIN_TOKEN
             };
-            var options = Options.Create(adminOptions);
-            serviceCollection.AddSingleton<IOptions<AdminOptions>>(options);
+            var options = Options.Create(accountManagerOptions);
+            serviceCollection.AddSingleton<IOptions<AccountManagerOptions>>(options);
             return serviceCollection;
         }
         #endregion

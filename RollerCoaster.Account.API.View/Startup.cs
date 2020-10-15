@@ -1,22 +1,15 @@
 using DickinsonBros.DataTable.Extensions;
 using DickinsonBros.DateTime.Extensions;
 using DickinsonBros.Email.Extensions;
-using DickinsonBros.Email.Models;
 using DickinsonBros.Encryption.Certificate.Extensions;
-using DickinsonBros.Encryption.Certificate.Models;
 using DickinsonBros.Encryption.JWT.Extensions;
-using DickinsonBros.Encryption.JWT.Models;
 using DickinsonBros.Guid.Extensions;
-using DickinsonBros.Logger;
-using DickinsonBros.Logger.Abstractions;
 using DickinsonBros.Logger.Extensions;
-using DickinsonBros.Middleware;
+using DickinsonBros.Middleware.ASP;
 using DickinsonBros.Redactor.Extensions;
-using DickinsonBros.Redactor.Models;
 using DickinsonBros.SQL.Extensions;
 using DickinsonBros.Stopwatch.Extensions;
 using DickinsonBros.Telemetry.Extensions;
-using DickinsonBros.Telemetry.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
@@ -26,13 +19,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
-using RollerCoaster.Acccount.API.View.Models;
-using RollerCoaster.Account.API.Infrastructure.AccountDB;
-using RollerCoaster.Account.API.Infrastructure.AccountDB.Models;
-using RollerCoaster.Account.API.Infrastructure.AccountEmail;
-using RollerCoaster.Account.API.Infrastructure.PasswordEncryption;
-using RollerCoaster.Account.API.Logic;
-using RollerCoaster.Account.API.Logic.Models;
+using RollerCoaster.Account.API.Infrastructure.AccountDB.Extensions;
+using RollerCoaster.Account.API.Infrastructure.AccountEmail.Extensions;
+using RollerCoaster.Account.API.Infrastructure.PasswordEncryption.Extensions;
+using RollerCoaster.Account.API.Logic.Extensions;
 using RollerCoaster.Account.API.View.Configurators;
 using RollerCoaster.Account.API.View.Models;
 using Serilog;
@@ -54,13 +44,47 @@ namespace RollerCoaster.Acccount.API.View
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddOptions();
+            //Configure Appliation
+            services.AddOptions();                                               //[X] 
+            AddControllers(services);                                            //[X]    
+            AddLogging(services);                                                //[ ] 
+            AddVersioning(services);                                             //[X] 
+            AddAuthentication(services);                                         //[ ] 
+            AddSwagger(services);                                                //[X] 
+
+            //Add Dickinsonbros Services
+            services.AddGuidService();                                           //[X] 
+            services.AddDateTimeService();                                       //[X] 
+            services.AddStopwatchService();                                      //[X] 
+            services.AddDataTableService();                                      //[X] 
+            services.AddLoggingService();                                        //[X] 
+            services.AddRedactorService();                                       //[X] 
+            services.AddConfigurationEncryptionService();                        //[ ] 
+            services.AddTelemetryService();                                      //[ ] 
+            services.AddSQLService();                                            //[ ] 
+            services.AddEmailService();                                          //[ ] 
+            services.AddJWTService<RollerCoasterJWTServiceOptions>();            //[ ] 
+
+            //Add MemoryCatche
+            services.AddMemoryCache();                                           //[X] 
+
+            //Add Local Services    
+            services.AddAccountManager();                                        //[ ] 
+            services.AddAccountDBService();                                      //[ ] 
+            services.AddPasswordEncryptionService();                             //[ ] 
+            services.AddAccountEmailService();                                   //[ ] 
+        }
+
+        public void AddControllers(IServiceCollection services)
+        {
             services.AddControllers().ConfigureApiBehaviorOptions(options =>
             {
                 options.SuppressMapClientErrors = true;
             });
+        }
 
-            //Add Splunk/Serilog
+        public void AddLogging(IServiceCollection services)
+        {
             services.AddLogging(loggingBuilder =>
             {
                 var logger = new LoggerConfiguration()
@@ -75,57 +99,19 @@ namespace RollerCoaster.Acccount.API.View
 
                 loggingBuilder.AddConfiguration(Configuration);
             });
+        }
 
-            //Add Guid Service
-            services.AddGuidService();
-
-            //Add DateTime Service
-            services.AddDateTimeService();
-
-            //Add Stopwatch Service
-            services.AddStopwatchService();
-
-            //Add DataTable
-            services.AddDataTableService();
-
-            //Add MemoryCatche
-            services.AddMemoryCache();
-
-            //Add Logging Service
-            services.AddSingleton(typeof(ILoggingService<>), typeof(LoggingService<>));
-            services.AddSingleton<ICorrelationService, CorrelationService>();
-
-            //Add Redactor Service
-            services.AddRedactorService();
-            services.Configure<RedactorServiceOptions>(Configuration.GetSection(nameof(RedactorServiceOptions)));
-
-            //Add Certificate Encryption Service
-            services.AddCertificateEncryptionService<CertificateEncryptionServiceOptions>();
-            services.Configure<CertificateEncryptionServiceOptions<StandardCertificateEncryptionServiceOptions>>(Configuration.GetSection(nameof(StandardCertificateEncryptionServiceOptions)));
-
-            //Add Telemetry Service
-            services.AddTelemetryService();
-            services.AddSingleton<IConfigureOptions<TelemetryServiceOptions>, TelemetryServiceOptionsConfigurator>();
-
-            //Add SQLService
-            services.AddSQLService();
-
-            //Add EmailService
-            services.AddEmailService();
-            services.AddSingleton<IConfigureOptions<EmailServiceOptions>, EmailServiceOptionsConfigurator>();
-
-            //Add JWTService Website
-            services.AddJWTService<RollerCoasterJWTServiceOptions>();
-            services.Configure<JWTServiceOptions<RollerCoasterJWTServiceOptions>>(Configuration.GetSection(nameof(RollerCoasterJWTServiceOptions)));
-
-            //Add Versioning
+        public void AddVersioning(IServiceCollection services)
+        {
             services.AddApiVersioning();
             services.AddApiVersioning(options => {
                 options.ReportApiVersions = true;
                 options.ApiVersionReader = new UrlSegmentApiVersionReader();
             });
+        }
 
-            //Add Authentication
+        public void AddAuthentication(IServiceCollection services)
+        {
             services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -133,18 +119,8 @@ namespace RollerCoaster.Acccount.API.View
             })
             .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, configureOptions: null);
             services.AddTransient<IConfigureOptions<JwtBearerOptions>, JwtBearerOptionsConfigurator>();
-
-            //Add Swagger
-            AddSwagger(services);
-
-            //Add             
-            services.AddSingleton<IAccountManager, AccountManager>();
-            services.AddTransient<IConfigureOptions<AdminOptions>, AdminOptionsConfigurator>();
-            services.AddSingleton<IAccountEmailService, AccountEmailService>();
-            services.AddSingleton<IPasswordEncryptionService, PasswordEncryptionService>();
-            services.AddSingleton<IAccountDBService, AccountDBService>();
-            services.AddSingleton<IConfigureOptions<RollerCoasterDBOptions>, RollerCoasterDBOptionsConfigurator>();
         }
+
         public void AddSwagger(IServiceCollection services)
         {
             services.AddSwaggerGen(options =>
@@ -196,6 +172,7 @@ namespace RollerCoaster.Acccount.API.View
                 });
             });
         }
+
         public void Configure(IApplicationBuilder app)
         {
             app.UseMiddleware<MiddlewareService>();

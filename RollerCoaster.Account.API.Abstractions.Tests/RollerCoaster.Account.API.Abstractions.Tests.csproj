@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DickinsonBros.Test" Version="1.0.10" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.1" />
     <PackageReference Include="MSTest.TestAdapter" Version="2.1.2" />
     <PackageReference Include="MSTest.TestFramework" Version="2.1.2" />
@@ -15,17 +14,6 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Models\" />
-    <Folder Include="Services\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\RollerCoaster.Account.API.Abstractions\RollerCoaster.Account.API.Abstractions.csproj" />
-    <ProjectReference Include="..\RollerCoaster.Account.API.Logic\RollerCoaster.Account.API.Logic.csproj" />
-    <ProjectReference Include="..\RollerCoaster.Account.API.View\RollerCoaster.Account.API.View.csproj" />
   </ItemGroup>
 
 </Project>

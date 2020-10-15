@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <AzureFunctionsVersion>v3</AzureFunctionsVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="DickinsonBros.DataTable" Version="1.0.0" />
+    <PackageReference Include="DickinsonBros.DateTime" Version="2.0.0" />
+    <PackageReference Include="DickinsonBros.Email" Version="2.0.0" />
+    <PackageReference Include="DickinsonBros.Encryption.Certificate" Version="5.0.0" />
+    <PackageReference Include="DickinsonBros.Encryption.JWT" Version="1.0.0" />
+    <PackageReference Include="DickinsonBros.Guid" Version="2.0.0" />
+    <PackageReference Include="DickinsonBros.Logger" Version="2.0.1" />
+    <PackageReference Include="DickinsonBros.Middleware" Version="4.0.1" />
+    <PackageReference Include="DickinsonBros.Redactor" Version="3.0.0" />
+    <PackageReference Include="DickinsonBros.SQL" Version="3.1.0" />
+    <PackageReference Include="DickinsonBros.Stopwatch" Version="3.0.0" />
+    <PackageReference Include="DickinsonBros.Telemetry" Version="5.0.1" />
+    <PackageReference Include="DickinsonBros.Telemetry.Abstractions" Version="5.1.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="3.1.6" />
+    <PackageReference Include="Serilog.AspNetCore" Version="3.4.0" />
+    <PackageReference Include="Serilog.Sinks.Async" Version="1.4.0" />
+    <PackageReference Include="Serilog.Sinks.Splunk" Version="3.4.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.1" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="4.7.0" />
+    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.9" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RollerCoaster.Account.API.Logic\RollerCoaster.Account.API.Logic.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="host.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="local.settings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+    </None>
+  </ItemGroup>
+</Project>

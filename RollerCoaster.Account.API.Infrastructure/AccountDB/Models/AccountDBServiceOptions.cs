@@ -1,6 +1,6 @@
 ﻿namespace RollerCoaster.Account.API.Infrastructure.AccountDB.Models
 {
-    public class RollerCoasterDBOptions
+    public class AccountDBServiceOptions
     {
         public string ConnectionString { get;  set; }
     }

@@ -27,11 +27,11 @@ namespace RollerCoaster.Account.API.Infrastructure.AccountDB
 
         public AccountDBService
         (
-            IOptions<RollerCoasterDBOptions> rollerCoasterDBOptions,
+            IOptions<AccountDBServiceOptions> accountDBServiceOptions,
             ISQLService sqlService
         )
         {
-            _connectionString = rollerCoasterDBOptions.Value.ConnectionString;
+            _connectionString = accountDBServiceOptions.Value.ConnectionString;
             _sqlService = sqlService;
         }
 

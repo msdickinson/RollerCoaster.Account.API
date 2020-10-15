@@ -3,8 +3,8 @@
 namespace RollerCoaster.Account.API.Logic.Models
 {
     [ExcludeFromCodeCoverage]
-    public class AdminOptions
+    public class AccountManagerOptions
     {
-        public string Token { get; set; }
+        public string AdminToken { get; set; }
     }
 }

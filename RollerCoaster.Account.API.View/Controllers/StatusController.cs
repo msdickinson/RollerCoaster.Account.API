@@ -49,7 +49,7 @@ namespace RollerCoaster.Account.API.View.Controllers
         /// <param name="Authorized"></param>
         /// <returns></returns>     
         [Authorize(Roles = Role.User)]
-        [HttpPost("UserAuthorized")]
+        [HttpGet("UserAuthorized")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -67,7 +67,7 @@ namespace RollerCoaster.Account.API.View.Controllers
         /// <param name="Authorized"></param>
         /// <returns></returns>     
         [Authorize(Roles = Role.Admin)]
-        [HttpPost("AdminAuthorized")]
+        [HttpGet("AdminAuthorized")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]

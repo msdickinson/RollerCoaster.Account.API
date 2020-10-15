@@ -5,10 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DickinsonBros.Guid.Abstractions" Version="2.0.0" />
+    <PackageReference Include="DickinsonBros.Encryption.Certificate.Abstractions" Version="4.1.0" />
+    <PackageReference Include="DickinsonBros.Guid.Abstractions" Version="2.0.1" />
+
+    <PackageReference Include="DickinsonBros.SQL" Version="4.0.0" />
   </ItemGroup>
 
   <ItemGroup>
+    
     <ProjectReference Include="..\RollerCoaster.Account.API.Abstractions\RollerCoaster.Account.API.Abstractions.csproj" />
     <ProjectReference Include="..\RollerCoaster.Account.API.Infrastructure\RollerCoaster.Account.API.Infrastructure.csproj" />
   </ItemGroup>
