@@ -1,4 +1,5 @@
-﻿using DickinsonBros.Guid.Abstractions;
+﻿using DickinsonBros.Email.Abstractions;
+using DickinsonBros.Guid.Abstractions;
 using DickinsonBros.Test;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -15,7 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace RollerCoaster.Account.API.Logic.Tests.Models
+namespace RollerCoaster.Account.API.Logic.Tests
 {
     [TestClass]
     public class AccountManagerTests : BaseTest
@@ -23,6 +24,496 @@ namespace RollerCoaster.Account.API.Logic.Tests.Models
         public const string ADMIN_TOKEN = "ExampleToken";
 
         #region CreateUserAsync
+
+        [TestMethod]
+        public async Task CreateUserAsync_Runs_IsVaildEmailFormatCalled()
+        {
+            await RunDependencyInjectedTestAsync
+            (
+                async (serviceProvider) =>
+                {
+                    //Setup
+                    var username = "User1000";
+                    var password = "Password!";
+                    var email = (string)null;
+
+                    var encryptResult = new EncryptResult
+                    {
+                        Hash = "hash",
+                        Salt = "salt"
+                    };
+                    var activateEmailToken = new Guid("e92ff9b6-f8cb-4cc7-8ce8-dd6431225f8d");
+                    var emailPreferenceToken = new Guid("e92ff9b6-f8cb-4cc7-8ce8-dd6431225f8d");
+                    var insertAccountResult = new Infrastructure.AccountDB.Models.InsertAccountResult
+                    {
+                        AccountId = 1000,
+                        DuplicateUser = false
+                    };
+
+                    bool newGuidBeenCalled = false;
+
+                    var passwordEncryptionServiceMock = serviceProvider.GetMock<IPasswordEncryptionService>();
+                    passwordEncryptionServiceMock
+                        .Setup
+                        (
+                            passwordEncryptionService => passwordEncryptionService.Encrypt
+                            (
+                                It.IsAny<string>(),
+                                It.IsAny<string>()
+                            )
+                        )
+                        .Returns
+                        (
+                            encryptResult
+                        );
+
+                    var guidServiceMock = serviceProvider.GetMock<IGuidService>();
+                    guidServiceMock
+                        .Setup
+                        (
+                            guidService => guidService.NewGuid()
+                        )
+                        .Returns
+                        (() =>
+                        {
+                            if (!newGuidBeenCalled)
+                            {
+                                newGuidBeenCalled = true;
+                                return activateEmailToken;
+                            }
+                            else
+                            {
+                                return emailPreferenceToken;
+                            }
+
+                        });
+
+                    var accountDBServiceMock = serviceProvider.GetMock<IAccountDBService>();
+                    accountDBServiceMock
+                    .Setup
+                    (
+                        accountDBService => accountDBService.InsertAccountAsync(It.IsAny<InsertAccountRequest>())
+                    )
+                    .ReturnsAsync
+                    (
+                        insertAccountResult
+                    );
+
+                    //--IEmailService
+                    var isValidEmailFormat = true;
+                    var validateEmailDomain = true;
+
+                    var emailServiceMock = serviceProvider.GetMock<IEmailService>();
+                    emailServiceMock
+                        .Setup
+                        (
+                            emailService => emailService.IsValidEmailFormat
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .Returns
+                        (
+                            isValidEmailFormat
+                        );
+
+                    emailServiceMock
+                        .Setup
+                        (
+                            emailService => emailService.ValidateEmailDomain
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .ReturnsAsync
+                        (
+                            validateEmailDomain
+                        );
+
+                    var uut = serviceProvider.GetRequiredService<IAccountManager>();
+                    var uutConcrete = (AccountManager)uut;
+
+                    //Act
+                    var observed = await uut.CreateUserAsync(username, password, email);
+
+                    //Assert
+                    emailServiceMock
+                        .Verify
+                        (
+                            emailService => emailService.IsValidEmailFormat
+                            (
+                                email
+                            ),
+                            Times.Once
+                        );
+                },
+               serviceCollection => ConfigureServices(serviceCollection)
+           );
+        }
+
+        [TestMethod]
+        public async Task CreateUserAsync_InvaildEmailFormat_ReturnsInvaildEmailFormat()
+        {
+            await RunDependencyInjectedTestAsync
+            (
+                async (serviceProvider) =>
+                {
+                    //Setup
+                    var username = "User1000";
+                    var password = "Password!";
+                    var email = (string)null;
+
+                    var encryptResult = new EncryptResult
+                    {
+                        Hash = "hash",
+                        Salt = "salt"
+                    };
+                    var activateEmailToken = new Guid("e92ff9b6-f8cb-4cc7-8ce8-dd6431225f8d");
+                    var emailPreferenceToken = new Guid("e92ff9b6-f8cb-4cc7-8ce8-dd6431225f8d");
+                    var insertAccountResult = new Infrastructure.AccountDB.Models.InsertAccountResult
+                    {
+                        AccountId = 1000,
+                        DuplicateUser = false
+                    };
+
+                    bool newGuidBeenCalled = false;
+
+                    var passwordEncryptionServiceMock = serviceProvider.GetMock<IPasswordEncryptionService>();
+                    passwordEncryptionServiceMock
+                        .Setup
+                        (
+                            passwordEncryptionService => passwordEncryptionService.Encrypt
+                            (
+                                It.IsAny<string>(),
+                                It.IsAny<string>()
+                            )
+                        )
+                        .Returns
+                        (
+                            encryptResult
+                        );
+
+                    var guidServiceMock = serviceProvider.GetMock<IGuidService>();
+                    guidServiceMock
+                        .Setup
+                        (
+                            guidService => guidService.NewGuid()
+                        )
+                        .Returns
+                        (() =>
+                        {
+                            if (!newGuidBeenCalled)
+                            {
+                                newGuidBeenCalled = true;
+                                return activateEmailToken;
+                            }
+                            else
+                            {
+                                return emailPreferenceToken;
+                            }
+
+                        });
+
+                    var accountDBServiceMock = serviceProvider.GetMock<IAccountDBService>();
+                    accountDBServiceMock
+                    .Setup
+                    (
+                        accountDBService => accountDBService.InsertAccountAsync(It.IsAny<InsertAccountRequest>())
+                    )
+                    .ReturnsAsync
+                    (
+                        insertAccountResult
+                    );
+
+                    //--IEmailService
+                    var isValidEmailFormat = false;
+                    var validateEmailDomain = true;
+
+                    var emailServiceMock = serviceProvider.GetMock<IEmailService>();
+                    emailServiceMock
+                        .Setup
+                        (
+                            emailService => emailService.IsValidEmailFormat
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .Returns
+                        (
+                            isValidEmailFormat
+                        );
+
+                    emailServiceMock
+                        .Setup
+                        (
+                            emailService => emailService.ValidateEmailDomain
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .ReturnsAsync
+                        (
+                            validateEmailDomain
+                        );
+
+                    var uut = serviceProvider.GetRequiredService<IAccountManager>();
+                    var uutConcrete = (AccountManager)uut;
+
+                    //Act
+                    var observed = await uut.CreateUserAsync(username, password, email);
+
+                    //Assert
+                    Assert.IsNull(observed.AccountId);
+                    Assert.AreEqual(CreateUserAccountResult.InvaildEmailFormat , observed.Result);
+                },
+               serviceCollection => ConfigureServices(serviceCollection)
+           );
+        }
+
+        [TestMethod]
+        public async Task CreateUserAsync_Runs_ValidateEmailDomainCalled()
+        {
+            await RunDependencyInjectedTestAsync
+            (
+                async (serviceProvider) =>
+                {
+                    //Setup
+                    var username = "User1000";
+                    var password = "Password!";
+                    var email = (string)null;
+
+                    var encryptResult = new EncryptResult
+                    {
+                        Hash = "hash",
+                        Salt = "salt"
+                    };
+                    var activateEmailToken = new Guid("e92ff9b6-f8cb-4cc7-8ce8-dd6431225f8d");
+                    var emailPreferenceToken = new Guid("e92ff9b6-f8cb-4cc7-8ce8-dd6431225f8d");
+                    var insertAccountResult = new Infrastructure.AccountDB.Models.InsertAccountResult
+                    {
+                        AccountId = 1000,
+                        DuplicateUser = false
+                    };
+
+                    bool newGuidBeenCalled = false;
+
+                    var passwordEncryptionServiceMock = serviceProvider.GetMock<IPasswordEncryptionService>();
+                    passwordEncryptionServiceMock
+                        .Setup
+                        (
+                            passwordEncryptionService => passwordEncryptionService.Encrypt
+                            (
+                                It.IsAny<string>(),
+                                It.IsAny<string>()
+                            )
+                        )
+                        .Returns
+                        (
+                            encryptResult
+                        );
+
+                    var guidServiceMock = serviceProvider.GetMock<IGuidService>();
+                    guidServiceMock
+                        .Setup
+                        (
+                            guidService => guidService.NewGuid()
+                        )
+                        .Returns
+                        (() =>
+                        {
+                            if (!newGuidBeenCalled)
+                            {
+                                newGuidBeenCalled = true;
+                                return activateEmailToken;
+                            }
+                            else
+                            {
+                                return emailPreferenceToken;
+                            }
+
+                        });
+
+                    var accountDBServiceMock = serviceProvider.GetMock<IAccountDBService>();
+                    accountDBServiceMock
+                    .Setup
+                    (
+                        accountDBService => accountDBService.InsertAccountAsync(It.IsAny<InsertAccountRequest>())
+                    )
+                    .ReturnsAsync
+                    (
+                        insertAccountResult
+                    );
+
+                    //--IEmailService
+                    var isValidEmailFormat = true;
+                    var validateEmailDomain = true;
+
+                    var emailServiceMock = serviceProvider.GetMock<IEmailService>();
+                    emailServiceMock
+                        .Setup
+                        (
+                            emailService => emailService.IsValidEmailFormat
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .Returns
+                        (
+                            isValidEmailFormat
+                        );
+
+                    emailServiceMock
+                        .Setup
+                        (
+                            emailService => emailService.ValidateEmailDomain
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .ReturnsAsync
+                        (
+                            validateEmailDomain
+                        );
+
+                    var uut = serviceProvider.GetRequiredService<IAccountManager>();
+                    var uutConcrete = (AccountManager)uut;
+
+                    //Act
+                    var observed = await uut.CreateUserAsync(username, password, email);
+
+                    //Assert                    
+                    emailServiceMock
+                    .Verify
+                    (
+                        emailService => emailService.ValidateEmailDomain
+                        (
+                            email
+                        ),
+                        Times.Once
+                    );
+                },
+               serviceCollection => ConfigureServices(serviceCollection)
+           );
+        }
+
+        [TestMethod]
+        public async Task CreateUserAsync_InvaildEmailDomain_ReturnsInvaildEmailDomain()
+        {
+            await RunDependencyInjectedTestAsync
+            (
+                async (serviceProvider) =>
+                {
+                    //Setup
+                    var username = "User1000";
+                    var password = "Password!";
+                    var email = (string)null;
+
+                    var encryptResult = new EncryptResult
+                    {
+                        Hash = "hash",
+                        Salt = "salt"
+                    };
+                    var activateEmailToken = new Guid("e92ff9b6-f8cb-4cc7-8ce8-dd6431225f8d");
+                    var emailPreferenceToken = new Guid("e92ff9b6-f8cb-4cc7-8ce8-dd6431225f8d");
+                    var insertAccountResult = new Infrastructure.AccountDB.Models.InsertAccountResult
+                    {
+                        AccountId = 1000,
+                        DuplicateUser = false
+                    };
+
+                    bool newGuidBeenCalled = false;
+
+                    var passwordEncryptionServiceMock = serviceProvider.GetMock<IPasswordEncryptionService>();
+                    passwordEncryptionServiceMock
+                        .Setup
+                        (
+                            passwordEncryptionService => passwordEncryptionService.Encrypt
+                            (
+                                It.IsAny<string>(),
+                                It.IsAny<string>()
+                            )
+                        )
+                        .Returns
+                        (
+                            encryptResult
+                        );
+
+                    var guidServiceMock = serviceProvider.GetMock<IGuidService>();
+                    guidServiceMock
+                        .Setup
+                        (
+                            guidService => guidService.NewGuid()
+                        )
+                        .Returns
+                        (() =>
+                        {
+                            if (!newGuidBeenCalled)
+                            {
+                                newGuidBeenCalled = true;
+                                return activateEmailToken;
+                            }
+                            else
+                            {
+                                return emailPreferenceToken;
+                            }
+
+                        });
+
+                    var accountDBServiceMock = serviceProvider.GetMock<IAccountDBService>();
+                    accountDBServiceMock
+                    .Setup
+                    (
+                        accountDBService => accountDBService.InsertAccountAsync(It.IsAny<InsertAccountRequest>())
+                    )
+                    .ReturnsAsync
+                    (
+                        insertAccountResult
+                    );
+
+                    //--IEmailService
+                    var isValidEmailFormat = true;
+                    var validateEmailDomain = false;
+
+                    var emailServiceMock = serviceProvider.GetMock<IEmailService>();
+                    emailServiceMock
+                        .Setup
+                        (
+                            emailService => emailService.IsValidEmailFormat
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .Returns
+                        (
+                            isValidEmailFormat
+                        );
+
+                    emailServiceMock
+                        .Setup
+                        (
+                            emailService => emailService.ValidateEmailDomain
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .ReturnsAsync
+                        (
+                            validateEmailDomain
+                        );
+
+                    var uut = serviceProvider.GetRequiredService<IAccountManager>();
+                    var uutConcrete = (AccountManager)uut;
+
+                    //Act
+                    var observed = await uut.CreateUserAsync(username, password, email);
+
+                    //Assert
+                    Assert.IsNull(observed.AccountId);
+                    Assert.AreEqual(CreateUserAccountResult.InvaildEmailDomain, observed.Result);
+                },
+               serviceCollection => ConfigureServices(serviceCollection)
+           );
+        }
 
         [TestMethod]
         public async Task CreateUserAsync_Runs_EncryptCalled()
@@ -98,6 +589,36 @@ namespace RollerCoaster.Account.API.Logic.Tests.Models
                         insertAccountResult
                     );
 
+                    //--IEmailService
+                    var isValidEmailFormat = true;
+                    var validateEmailDomain = true;
+
+                    var emailServiceMock = serviceProvider.GetMock<IEmailService>();
+                    emailServiceMock
+                        .Setup
+                        (
+                            emailService => emailService.IsValidEmailFormat
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .Returns
+                        (
+                            isValidEmailFormat
+                        );
+
+                    emailServiceMock
+                        .Setup
+                        (
+                            emailService => emailService.ValidateEmailDomain
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .ReturnsAsync
+                        (
+                            validateEmailDomain
+                        );
 
                     var uut = serviceProvider.GetRequiredService<IAccountManager>();
                     var uutConcrete = (AccountManager)uut;
@@ -194,6 +715,37 @@ namespace RollerCoaster.Account.API.Logic.Tests.Models
                         insertAccountResult
                     );
 
+
+                    //--IEmailService
+                    var isValidEmailFormat = true;
+                    var validateEmailDomain = true;
+
+                    var emailServiceMock = serviceProvider.GetMock<IEmailService>();
+                    emailServiceMock
+                        .Setup
+                        (
+                            emailService => emailService.IsValidEmailFormat
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .Returns
+                        (
+                            isValidEmailFormat
+                        );
+
+                    emailServiceMock
+                        .Setup
+                        (
+                            emailService => emailService.ValidateEmailDomain
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .ReturnsAsync
+                        (
+                            validateEmailDomain
+                        );
 
                     var uut = serviceProvider.GetRequiredService<IAccountManager>();
                     var uutConcrete = (AccountManager)uut;
@@ -292,6 +844,36 @@ namespace RollerCoaster.Account.API.Logic.Tests.Models
                         insertAccountResult
                     );
 
+                    //--IEmailService
+                    var isValidEmailFormat = true;
+                    var validateEmailDomain = true;
+
+                    var emailServiceMock = serviceProvider.GetMock<IEmailService>();
+                    emailServiceMock
+                        .Setup
+                        (
+                            emailService => emailService.IsValidEmailFormat
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .Returns
+                        (
+                            isValidEmailFormat
+                        );
+
+                    emailServiceMock
+                        .Setup
+                        (
+                            emailService => emailService.ValidateEmailDomain
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .ReturnsAsync
+                        (
+                            validateEmailDomain
+                        );
 
                     var uut = serviceProvider.GetRequiredService<IAccountManager>();
                     var uutConcrete = (AccountManager)uut;
@@ -402,6 +984,36 @@ namespace RollerCoaster.Account.API.Logic.Tests.Models
                         insertAccountResult
                     );
 
+                    //--IEmailService
+                    var isValidEmailFormat = true;
+                    var validateEmailDomain = true;
+
+                    var emailServiceMock = serviceProvider.GetMock<IEmailService>();
+                    emailServiceMock
+                        .Setup
+                        (
+                            emailService => emailService.IsValidEmailFormat
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .Returns
+                        (
+                            isValidEmailFormat
+                        );
+
+                    emailServiceMock
+                        .Setup
+                        (
+                            emailService => emailService.ValidateEmailDomain
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .ReturnsAsync
+                        (
+                            validateEmailDomain
+                        );
 
                     var uut = serviceProvider.GetRequiredService<IAccountManager>();
                     var uutConcrete = (AccountManager)uut;
@@ -522,6 +1134,37 @@ namespace RollerCoaster.Account.API.Logic.Tests.Models
                         observedActivateToken = activateToken;
                         observedUpdateEmailSettingsToken = updateEmailSettingsToken;
                     });
+
+                    //--IEmailService
+                    var isValidEmailFormat = true;
+                    var validateEmailDomain = true;
+
+                    var emailServiceMock = serviceProvider.GetMock<IEmailService>();
+                    emailServiceMock
+                        .Setup
+                        (
+                            emailService => emailService.IsValidEmailFormat
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .Returns
+                        (
+                            isValidEmailFormat
+                        );
+
+                    emailServiceMock
+                        .Setup
+                        (
+                            emailService => emailService.ValidateEmailDomain
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .ReturnsAsync
+                        (
+                            validateEmailDomain
+                        );
 
                     var uut = serviceProvider.GetRequiredService<IAccountManager>();
                     var uutConcrete = (AccountManager)uut;
@@ -644,6 +1287,37 @@ namespace RollerCoaster.Account.API.Logic.Tests.Models
                        )
                     );
 
+                    //--IEmailService
+                    var isValidEmailFormat = true;
+                    var validateEmailDomain = true;
+
+                    var emailServiceMock = serviceProvider.GetMock<IEmailService>();
+                    emailServiceMock
+                        .Setup
+                        (
+                            emailService => emailService.IsValidEmailFormat
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .Returns
+                        (
+                            isValidEmailFormat
+                        );
+
+                    emailServiceMock
+                        .Setup
+                        (
+                            emailService => emailService.ValidateEmailDomain
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .ReturnsAsync
+                        (
+                            validateEmailDomain
+                        );
+
                     var uut = serviceProvider.GetRequiredService<IAccountManager>();
                     var uutConcrete = (AccountManager)uut;
 
@@ -690,6 +1364,39 @@ namespace RollerCoaster.Account.API.Logic.Tests.Models
 
                     bool newGuidBeenCalled = false;
 
+
+                    //--IEmailService
+                    var isValidEmailFormat = true;
+                    var validateEmailDomain = true;
+
+                    var emailServiceMock = serviceProvider.GetMock<IEmailService>();
+                    emailServiceMock
+                        .Setup
+                        (
+                            emailService => emailService.IsValidEmailFormat
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .Returns
+                        (
+                            isValidEmailFormat
+                        );
+
+                    emailServiceMock
+                        .Setup
+                        (
+                            emailService => emailService.ValidateEmailDomain
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .ReturnsAsync
+                        (
+                            validateEmailDomain
+                        );
+
+                    //--IPasswordEncryptionService
                     var passwordEncryptionServiceMock = serviceProvider.GetMock<IPasswordEncryptionService>();
                     passwordEncryptionServiceMock
                         .Setup
@@ -705,6 +1412,7 @@ namespace RollerCoaster.Account.API.Logic.Tests.Models
                             encryptResult
                         );
 
+                    //--IGuidService
                     var guidServiceMock = serviceProvider.GetMock<IGuidService>();
                     guidServiceMock
                         .Setup
@@ -754,6 +1462,518 @@ namespace RollerCoaster.Account.API.Logic.Tests.Models
            );
         }
 
+        [TestMethod]
+        public async Task CreateAdminAsync_Runs_IsVaildEmailFormatCalled()
+        {
+            await RunDependencyInjectedTestAsync
+            (
+                async (serviceProvider) =>
+                {
+                    //Setup
+                    var username = "User1000";
+                    var password = "Password!";
+                    var token = ADMIN_TOKEN;
+                    var email = (string)null;
+
+                    var encryptResult = new EncryptResult
+                    {
+                        Hash = "hash",
+                        Salt = "salt"
+                    };
+                    var activateEmailToken = new Guid("e92ff9b6-f8cb-4cc7-8ce8-dd6431225f8d");
+                    var emailPreferenceToken = new Guid("e92ff9b6-f8cb-4cc7-8ce8-dd6431225f8d");
+                    var insertAccountResult = new Infrastructure.AccountDB.Models.InsertAccountResult
+                    {
+                        AccountId = 1000,
+                        DuplicateUser = false
+                    };
+
+                    bool newGuidBeenCalled = false;
+
+
+                    //--IEmailService
+                    var isValidEmailFormat = true;
+                    var validateEmailDomain = true;
+
+                    var emailServiceMock = serviceProvider.GetMock<IEmailService>();
+                    emailServiceMock
+                        .Setup
+                        (
+                            emailService => emailService.IsValidEmailFormat
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .Returns
+                        (
+                            isValidEmailFormat
+                        );
+
+                    emailServiceMock
+                        .Setup
+                        (
+                            emailService => emailService.ValidateEmailDomain
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .ReturnsAsync
+                        (
+                            validateEmailDomain
+                        );
+
+                    //--IPasswordEncryptionService
+                    var passwordEncryptionServiceMock = serviceProvider.GetMock<IPasswordEncryptionService>();
+                    passwordEncryptionServiceMock
+                        .Setup
+                        (
+                            passwordEncryptionService => passwordEncryptionService.Encrypt
+                            (
+                                It.IsAny<string>(),
+                                It.IsAny<string>()
+                            )
+                        )
+                        .Returns
+                        (
+                            encryptResult
+                        );
+
+                    //--IGuidService
+                    var guidServiceMock = serviceProvider.GetMock<IGuidService>();
+                    guidServiceMock
+                        .Setup
+                        (
+                            guidService => guidService.NewGuid()
+                        )
+                        .Returns
+                        (() =>
+                        {
+                            if (!newGuidBeenCalled)
+                            {
+                                newGuidBeenCalled = true;
+                                return activateEmailToken;
+                            }
+                            else
+                            {
+                                return emailPreferenceToken;
+                            }
+
+                        });
+
+                    var accountDBServiceMock = serviceProvider.GetMock<IAccountDBService>();
+                    accountDBServiceMock
+                    .Setup
+                    (
+                        accountDBService => accountDBService.InsertAccountAsync(It.IsAny<InsertAccountRequest>())
+                    )
+                    .ReturnsAsync
+                    (
+                        insertAccountResult
+                    );
+
+                    var uut = serviceProvider.GetRequiredService<IAccountManager>();
+                    var uutConcrete = (AccountManager)uut;
+
+                    //Act
+                    var observed = await uut.CreateAdminAsync(username, token, password, email);
+
+                    //Assert
+                    emailServiceMock
+                        .Verify
+                        (
+                            emailService => emailService.IsValidEmailFormat
+                            (
+                                email
+                            ),
+                            Times.Once
+                        );
+
+                },
+               serviceCollection => ConfigureServices(serviceCollection)
+           );
+        }
+
+        [TestMethod]
+        public async Task CreateAdminAsync_InvaildEmailFormat_ReturnsInvaildEmailFormat()
+        {
+            await RunDependencyInjectedTestAsync
+            (
+                async (serviceProvider) =>
+                {
+                    //Setup
+                    var username = "User1000";
+                    var password = "Password!";
+                    var token = ADMIN_TOKEN;
+                    var email = (string)null;
+
+                    var encryptResult = new EncryptResult
+                    {
+                        Hash = "hash",
+                        Salt = "salt"
+                    };
+                    var activateEmailToken = new Guid("e92ff9b6-f8cb-4cc7-8ce8-dd6431225f8d");
+                    var emailPreferenceToken = new Guid("e92ff9b6-f8cb-4cc7-8ce8-dd6431225f8d");
+                    var insertAccountResult = new Infrastructure.AccountDB.Models.InsertAccountResult
+                    {
+                        AccountId = 1000,
+                        DuplicateUser = false
+                    };
+
+                    bool newGuidBeenCalled = false;
+
+
+                    //--IEmailService
+                    var isValidEmailFormat = false;
+                    var validateEmailDomain = true;
+
+                    var emailServiceMock = serviceProvider.GetMock<IEmailService>();
+                    emailServiceMock
+                        .Setup
+                        (
+                            emailService => emailService.IsValidEmailFormat
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .Returns
+                        (
+                            isValidEmailFormat
+                        );
+
+                    emailServiceMock
+                        .Setup
+                        (
+                            emailService => emailService.ValidateEmailDomain
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .ReturnsAsync
+                        (
+                            validateEmailDomain
+                        );
+
+                    //--IPasswordEncryptionService
+                    var passwordEncryptionServiceMock = serviceProvider.GetMock<IPasswordEncryptionService>();
+                    passwordEncryptionServiceMock
+                        .Setup
+                        (
+                            passwordEncryptionService => passwordEncryptionService.Encrypt
+                            (
+                                It.IsAny<string>(),
+                                It.IsAny<string>()
+                            )
+                        )
+                        .Returns
+                        (
+                            encryptResult
+                        );
+
+                    //--IGuidService
+                    var guidServiceMock = serviceProvider.GetMock<IGuidService>();
+                    guidServiceMock
+                        .Setup
+                        (
+                            guidService => guidService.NewGuid()
+                        )
+                        .Returns
+                        (() =>
+                        {
+                            if (!newGuidBeenCalled)
+                            {
+                                newGuidBeenCalled = true;
+                                return activateEmailToken;
+                            }
+                            else
+                            {
+                                return emailPreferenceToken;
+                            }
+
+                        });
+
+                    var accountDBServiceMock = serviceProvider.GetMock<IAccountDBService>();
+                    accountDBServiceMock
+                    .Setup
+                    (
+                        accountDBService => accountDBService.InsertAccountAsync(It.IsAny<InsertAccountRequest>())
+                    )
+                    .ReturnsAsync
+                    (
+                        insertAccountResult
+                    );
+
+                    var uut = serviceProvider.GetRequiredService<IAccountManager>();
+                    var uutConcrete = (AccountManager)uut;
+
+                    //Act
+                    var observed = await uut.CreateAdminAsync(username, token, password, email);
+
+                    //Assert
+                    Assert.IsNotNull(observed);
+                    Assert.IsNull(observed.AccountId);
+                    Assert.AreEqual(CreateAdminAccountResult.InvaildEmailFormat, observed.Result);
+
+                },
+               serviceCollection => ConfigureServices(serviceCollection)
+           );
+        }
+
+        [TestMethod]
+        public async Task CreateAdminAsync_Runs_ValidateEmailDomainCalled()
+        {
+            await RunDependencyInjectedTestAsync
+            (
+                async (serviceProvider) =>
+                {
+                    //Setup
+                    var username = "User1000";
+                    var password = "Password!";
+                    var token = ADMIN_TOKEN;
+                    var email = (string)null;
+
+                    var encryptResult = new EncryptResult
+                    {
+                        Hash = "hash",
+                        Salt = "salt"
+                    };
+                    var activateEmailToken = new Guid("e92ff9b6-f8cb-4cc7-8ce8-dd6431225f8d");
+                    var emailPreferenceToken = new Guid("e92ff9b6-f8cb-4cc7-8ce8-dd6431225f8d");
+                    var insertAccountResult = new Infrastructure.AccountDB.Models.InsertAccountResult
+                    {
+                        AccountId = 1000,
+                        DuplicateUser = false
+                    };
+
+                    bool newGuidBeenCalled = false;
+
+
+                    //--IEmailService
+                    var isValidEmailFormat = true;
+                    var validateEmailDomain = true;
+
+                    var emailServiceMock = serviceProvider.GetMock<IEmailService>();
+                    emailServiceMock
+                        .Setup
+                        (
+                            emailService => emailService.IsValidEmailFormat
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .Returns
+                        (
+                            isValidEmailFormat
+                        );
+
+                    emailServiceMock
+                        .Setup
+                        (
+                            emailService => emailService.ValidateEmailDomain
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .ReturnsAsync
+                        (
+                            validateEmailDomain
+                        );
+
+                    //--IPasswordEncryptionService
+                    var passwordEncryptionServiceMock = serviceProvider.GetMock<IPasswordEncryptionService>();
+                    passwordEncryptionServiceMock
+                        .Setup
+                        (
+                            passwordEncryptionService => passwordEncryptionService.Encrypt
+                            (
+                                It.IsAny<string>(),
+                                It.IsAny<string>()
+                            )
+                        )
+                        .Returns
+                        (
+                            encryptResult
+                        );
+
+                    //--IGuidService
+                    var guidServiceMock = serviceProvider.GetMock<IGuidService>();
+                    guidServiceMock
+                        .Setup
+                        (
+                            guidService => guidService.NewGuid()
+                        )
+                        .Returns
+                        (() =>
+                        {
+                            if (!newGuidBeenCalled)
+                            {
+                                newGuidBeenCalled = true;
+                                return activateEmailToken;
+                            }
+                            else
+                            {
+                                return emailPreferenceToken;
+                            }
+
+                        });
+
+                    var accountDBServiceMock = serviceProvider.GetMock<IAccountDBService>();
+                    accountDBServiceMock
+                    .Setup
+                    (
+                        accountDBService => accountDBService.InsertAccountAsync(It.IsAny<InsertAccountRequest>())
+                    )
+                    .ReturnsAsync
+                    (
+                        insertAccountResult
+                    );
+
+                    var uut = serviceProvider.GetRequiredService<IAccountManager>();
+                    var uutConcrete = (AccountManager)uut;
+
+                    //Act
+                    var observed = await uut.CreateAdminAsync(username, token, password, email);
+
+                    //Assert
+                    emailServiceMock
+                    .Verify
+                    (
+                        emailService => emailService.ValidateEmailDomain
+                        (
+                            email
+                        ),
+                        Times.Once
+                    );
+                },
+               serviceCollection => ConfigureServices(serviceCollection)
+           );
+        }
+
+        [TestMethod]
+        public async Task CreateAdminAsync_InvaildEmailDomain_ReturnsInvaildEmailDomain()
+        {
+            await RunDependencyInjectedTestAsync
+            (
+                async (serviceProvider) =>
+                {
+                    //Setup
+                    var username = "User1000";
+                    var password = "Password!";
+                    var token = ADMIN_TOKEN;
+                    var email = (string)null;
+
+                    var encryptResult = new EncryptResult
+                    {
+                        Hash = "hash",
+                        Salt = "salt"
+                    };
+                    var activateEmailToken = new Guid("e92ff9b6-f8cb-4cc7-8ce8-dd6431225f8d");
+                    var emailPreferenceToken = new Guid("e92ff9b6-f8cb-4cc7-8ce8-dd6431225f8d");
+                    var insertAccountResult = new Infrastructure.AccountDB.Models.InsertAccountResult
+                    {
+                        AccountId = 1000,
+                        DuplicateUser = false
+                    };
+
+                    bool newGuidBeenCalled = false;
+
+
+                    //--IEmailService
+                    var isValidEmailFormat = true;
+                    var validateEmailDomain = false;
+
+                    var emailServiceMock = serviceProvider.GetMock<IEmailService>();
+                    emailServiceMock
+                        .Setup
+                        (
+                            emailService => emailService.IsValidEmailFormat
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .Returns
+                        (
+                            isValidEmailFormat
+                        );
+
+                    emailServiceMock
+                        .Setup
+                        (
+                            emailService => emailService.ValidateEmailDomain
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .ReturnsAsync
+                        (
+                            validateEmailDomain
+                        );
+
+                    //--IPasswordEncryptionService
+                    var passwordEncryptionServiceMock = serviceProvider.GetMock<IPasswordEncryptionService>();
+                    passwordEncryptionServiceMock
+                        .Setup
+                        (
+                            passwordEncryptionService => passwordEncryptionService.Encrypt
+                            (
+                                It.IsAny<string>(),
+                                It.IsAny<string>()
+                            )
+                        )
+                        .Returns
+                        (
+                            encryptResult
+                        );
+
+                    //--IGuidService
+                    var guidServiceMock = serviceProvider.GetMock<IGuidService>();
+                    guidServiceMock
+                        .Setup
+                        (
+                            guidService => guidService.NewGuid()
+                        )
+                        .Returns
+                        (() =>
+                        {
+                            if (!newGuidBeenCalled)
+                            {
+                                newGuidBeenCalled = true;
+                                return activateEmailToken;
+                            }
+                            else
+                            {
+                                return emailPreferenceToken;
+                            }
+
+                        });
+
+                    var accountDBServiceMock = serviceProvider.GetMock<IAccountDBService>();
+                    accountDBServiceMock
+                    .Setup
+                    (
+                        accountDBService => accountDBService.InsertAccountAsync(It.IsAny<InsertAccountRequest>())
+                    )
+                    .ReturnsAsync
+                    (
+                        insertAccountResult
+                    );
+
+                    var uut = serviceProvider.GetRequiredService<IAccountManager>();
+                    var uutConcrete = (AccountManager)uut;
+
+                    //Act
+                    var observed = await uut.CreateAdminAsync(username, token, password, email);
+
+                    //Assert
+                    Assert.IsNotNull(observed);
+                    Assert.IsNull(observed.AccountId);
+                    Assert.AreEqual(CreateAdminAccountResult.InvaildEmailDomain, observed.Result);
+
+                },
+               serviceCollection => ConfigureServices(serviceCollection)
+           );
+        }
+        
+        
         [TestMethod]
         public async Task CreateAdminAsync_Runs_EncryptCalled()
         {
@@ -828,6 +2048,37 @@ namespace RollerCoaster.Account.API.Logic.Tests.Models
                     (
                         insertAccountResult
                     );
+
+                    //--IEmailService
+                    var isValidEmailFormat = true;
+                    var validateEmailDomain = true;
+
+                    var emailServiceMock = serviceProvider.GetMock<IEmailService>();
+                    emailServiceMock
+                        .Setup
+                        (
+                            emailService => emailService.IsValidEmailFormat
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .Returns
+                        (
+                            isValidEmailFormat
+                        );
+
+                    emailServiceMock
+                        .Setup
+                        (
+                            emailService => emailService.ValidateEmailDomain
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .ReturnsAsync
+                        (
+                            validateEmailDomain
+                        );
 
 
                     var uut = serviceProvider.GetRequiredService<IAccountManager>();
@@ -926,6 +2177,36 @@ namespace RollerCoaster.Account.API.Logic.Tests.Models
                         insertAccountResult
                     );
 
+                    //--IEmailService
+                    var isValidEmailFormat = true;
+                    var validateEmailDomain = true;
+
+                    var emailServiceMock = serviceProvider.GetMock<IEmailService>();
+                    emailServiceMock
+                        .Setup
+                        (
+                            emailService => emailService.IsValidEmailFormat
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .Returns
+                        (
+                            isValidEmailFormat
+                        );
+
+                    emailServiceMock
+                        .Setup
+                        (
+                            emailService => emailService.ValidateEmailDomain
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .ReturnsAsync
+                        (
+                            validateEmailDomain
+                        );
 
                     var uut = serviceProvider.GetRequiredService<IAccountManager>();
                     var uutConcrete = (AccountManager)uut;
@@ -1025,6 +2306,36 @@ namespace RollerCoaster.Account.API.Logic.Tests.Models
                         insertAccountResult
                     );
 
+                    //--IEmailService
+                    var isValidEmailFormat = true;
+                    var validateEmailDomain = true;
+
+                    var emailServiceMock = serviceProvider.GetMock<IEmailService>();
+                    emailServiceMock
+                        .Setup
+                        (
+                            emailService => emailService.IsValidEmailFormat
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .Returns
+                        (
+                            isValidEmailFormat
+                        );
+
+                    emailServiceMock
+                        .Setup
+                        (
+                            emailService => emailService.ValidateEmailDomain
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .ReturnsAsync
+                        (
+                            validateEmailDomain
+                        );
 
                     var uut = serviceProvider.GetRequiredService<IAccountManager>();
                     var uutConcrete = (AccountManager)uut;
@@ -1135,7 +2446,36 @@ namespace RollerCoaster.Account.API.Logic.Tests.Models
                     (
                         insertAccountResult
                     );
+                    //--IEmailService
+                    var isValidEmailFormat = true;
+                    var validateEmailDomain = true;
 
+                    var emailServiceMock = serviceProvider.GetMock<IEmailService>();
+                    emailServiceMock
+                        .Setup
+                        (
+                            emailService => emailService.IsValidEmailFormat
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .Returns
+                        (
+                            isValidEmailFormat
+                        );
+
+                    emailServiceMock
+                        .Setup
+                        (
+                            emailService => emailService.ValidateEmailDomain
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .ReturnsAsync
+                        (
+                            validateEmailDomain
+                        );
 
                     var uut = serviceProvider.GetRequiredService<IAccountManager>();
                     var uutConcrete = (AccountManager)uut;
@@ -1257,6 +2597,37 @@ namespace RollerCoaster.Account.API.Logic.Tests.Models
                         observedActivateToken = activateToken;
                         observedUpdateEmailSettingsToken = updateEmailSettingsToken;
                     });
+
+                    //--IEmailService
+                    var isValidEmailFormat = true;
+                    var validateEmailDomain = true;
+
+                    var emailServiceMock = serviceProvider.GetMock<IEmailService>();
+                    emailServiceMock
+                        .Setup
+                        (
+                            emailService => emailService.IsValidEmailFormat
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .Returns
+                        (
+                            isValidEmailFormat
+                        );
+
+                    emailServiceMock
+                        .Setup
+                        (
+                            emailService => emailService.ValidateEmailDomain
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .ReturnsAsync
+                        (
+                            validateEmailDomain
+                        );
 
                     var uut = serviceProvider.GetRequiredService<IAccountManager>();
                     var uutConcrete = (AccountManager)uut;
@@ -1380,6 +2751,36 @@ namespace RollerCoaster.Account.API.Logic.Tests.Models
                        )
                     );
 
+                    //--IEmailService
+                    var isValidEmailFormat = true;
+                    var validateEmailDomain = true;
+
+                    var emailServiceMock = serviceProvider.GetMock<IEmailService>();
+                    emailServiceMock
+                        .Setup
+                        (
+                            emailService => emailService.IsValidEmailFormat
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .Returns
+                        (
+                            isValidEmailFormat
+                        );
+
+                    emailServiceMock
+                        .Setup
+                        (
+                            emailService => emailService.ValidateEmailDomain
+                            (
+                                It.IsAny<string>()
+                            )
+                        )
+                        .ReturnsAsync
+                        (
+                            validateEmailDomain
+                        );
                     var uut = serviceProvider.GetRequiredService<IAccountManager>();
                     var uutConcrete = (AccountManager)uut;
 
@@ -3737,6 +5138,7 @@ namespace RollerCoaster.Account.API.Logic.Tests.Models
 
 
         #endregion
+
         #region Helpers
 
         private IServiceCollection ConfigureServices(IServiceCollection serviceCollection)
@@ -3746,7 +5148,8 @@ namespace RollerCoaster.Account.API.Logic.Tests.Models
             serviceCollection.AddSingleton(Mock.Of<IAccountDBService>());
             serviceCollection.AddSingleton(Mock.Of<IPasswordEncryptionService>());
             serviceCollection.AddSingleton(Mock.Of<IAccountEmailService>());
-
+            serviceCollection.AddSingleton(Mock.Of<IEmailService>());
+            
             var accountManagerOptions = new AccountManagerOptions
             {
                 AdminToken = ADMIN_TOKEN

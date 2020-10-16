@@ -1,4 +1,5 @@
-﻿using DickinsonBros.Guid.Abstractions;
+﻿using DickinsonBros.Email.Abstractions;
+using DickinsonBros.Guid.Abstractions;
 using Microsoft.Extensions.Options;
 using RollerCoaster.Account.API.Abstractions;
 using RollerCoaster.Account.API.Infrastructure.AccountDB;
@@ -15,6 +16,7 @@ namespace RollerCoaster.Account.API.Logic
         internal readonly IPasswordEncryptionService _passwordEncryptionService;
         internal readonly IAccountEmailService _accountEmailService;
         internal readonly AccountManagerOptions _accountManagerOptions;
+        internal readonly IEmailService _emailService;
 
         public AccountManager
         (
@@ -22,6 +24,7 @@ namespace RollerCoaster.Account.API.Logic
             IAccountDBService accountDBService,
             IPasswordEncryptionService passwordEncryptionService,
             IAccountEmailService accountEmailService,
+            IEmailService emailService,
             IOptions<AccountManagerOptions> accountManagerOptions
         )
         {
@@ -29,12 +32,24 @@ namespace RollerCoaster.Account.API.Logic
             _accountDBService = accountDBService;
             _passwordEncryptionService = passwordEncryptionService;
             _accountEmailService = accountEmailService;
+            _emailService = emailService;
             _accountManagerOptions = accountManagerOptions.Value;
         }
         public async Task<CreateUserAccountDescriptor> CreateUserAsync(string username, string password, string email)
         {
             var createAccountDescriptor = new CreateUserAccountDescriptor();
 
+            if(!_emailService.IsValidEmailFormat(email))
+            {
+                createAccountDescriptor.Result = CreateUserAccountResult.InvaildEmailFormat;
+                return createAccountDescriptor;
+            }
+            if (! await _emailService.ValidateEmailDomain(email).ConfigureAwait(false))
+            {
+                createAccountDescriptor.Result = CreateUserAccountResult.InvaildEmailDomain;
+                return createAccountDescriptor;
+            }
+            
             var encryptResult = _passwordEncryptionService.Encrypt(password);
 
             var activateEmailToken = _guidService.NewGuid().ToString();
@@ -80,6 +95,17 @@ namespace RollerCoaster.Account.API.Logic
             if (_accountManagerOptions.AdminToken != token)
             {
                 createAccountDescriptor.Result = CreateAdminAccountResult.InvaildToken;
+                return createAccountDescriptor;
+            }
+
+            if (!_emailService.IsValidEmailFormat(email))
+            {
+                createAccountDescriptor.Result = CreateAdminAccountResult.InvaildEmailFormat;
+                return createAccountDescriptor;
+            }
+            if (!await _emailService.ValidateEmailDomain(email).ConfigureAwait(false))
+            {
+                createAccountDescriptor.Result = CreateAdminAccountResult.InvaildEmailDomain;
                 return createAccountDescriptor;
             }
 

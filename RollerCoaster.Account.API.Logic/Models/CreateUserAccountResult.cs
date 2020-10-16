@@ -3,6 +3,8 @@
     public enum CreateUserAccountResult
     {
         DuplicateUser,
-        Successful
+        Successful,
+        InvaildEmailFormat,
+        InvaildEmailDomain
     }
 }

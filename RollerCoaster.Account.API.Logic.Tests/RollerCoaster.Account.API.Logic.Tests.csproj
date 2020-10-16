@@ -21,4 +21,8 @@
     <ProjectReference Include="..\RollerCoaster.Account.API.Logic\RollerCoaster.Account.API.Logic.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
+
 </Project>

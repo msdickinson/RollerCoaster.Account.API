@@ -29,6 +29,8 @@ namespace RollerCoaster.Account.API.View.Controllers
         internal const string EMAIL_NOT_ACTIVATED_MESSAGE = "Email Not Activated";
         internal const string NO_EMAIL_SENT_DUE_TO_EMAIL_PERFERENCEMESSAGE = "No Email Sent Due To Email Preference";
         internal const string EMAIL_HAS_ALREADY_BEEN_ACTIVATED = "Email has already been activated";
+        internal const string INVAILD_EMAIL_FORMAT = "Invaild Email Format";
+        internal const string INVAILD_EMAIL_DOMAIN = "Invaild Email Domain";
 
         internal readonly IDateTimeService _dateTimeService;
         internal readonly IAccountManager _accountManager;
@@ -66,6 +68,16 @@ namespace RollerCoaster.Account.API.View.Controllers
                     createUserAccountRequest.Password,
                     createUserAccountRequest.Email
                 );
+
+            if (createAccountDescriptor.Result == CreateUserAccountResult.InvaildEmailFormat)
+            {
+                return StatusCode(400, INVAILD_EMAIL_FORMAT);
+            }
+
+            if (createAccountDescriptor.Result == CreateUserAccountResult.InvaildEmailDomain)
+            {
+                return StatusCode(400, INVAILD_EMAIL_DOMAIN);
+            }
 
             if (createAccountDescriptor.Result == CreateUserAccountResult.DuplicateUser)
             {
@@ -116,6 +128,16 @@ namespace RollerCoaster.Account.API.View.Controllers
             if (createAccountDescriptor.Result == CreateAdminAccountResult.InvaildToken)
             {
                 return StatusCode(401);
+            }
+
+            if (createAccountDescriptor.Result == CreateAdminAccountResult.InvaildEmailFormat)
+            {
+                return StatusCode(400, INVAILD_EMAIL_FORMAT);
+            }
+
+            if (createAccountDescriptor.Result == CreateAdminAccountResult.InvaildEmailDomain)
+            {
+                return StatusCode(400, INVAILD_EMAIL_DOMAIN);
             }
 
             if (createAccountDescriptor.Result == CreateAdminAccountResult.DuplicateUser)

@@ -4,6 +4,8 @@
     {
         InvaildToken,
         DuplicateUser,
-        Successful
+        Successful,
+        InvaildEmailFormat,
+        InvaildEmailDomain
     }
 }

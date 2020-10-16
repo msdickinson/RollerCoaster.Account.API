@@ -471,6 +471,116 @@ namespace RollerCoaster.Account.API.View.Tests.Controllers
         }
 
         [TestMethod]
+        public async Task CreateAdminAccountAsync_InvaildEmailFormat_ReturnsInvaildEmailFormatWithStatusCode400()
+        {
+            await RunDependencyInjectedTestAsync
+            (
+                async (serviceProvider) =>
+                {
+                    //Setup
+                    var createAdminAccountRequest = new CreateAdminAccountRequest
+                    {
+                        Username = "User1000",
+                        Token = "MyToken",
+                        Password = "Password!"
+                    };
+
+                    var createAdminAccountDescriptor = new CreateAdminAccountDescriptor
+                    {
+                        Result = CreateAdminAccountResult.InvaildEmailFormat,
+                        AccountId = null
+                    };
+
+                    var accountManagerMock = serviceProvider.GetMock<IAccountManager>();
+                    accountManagerMock
+                        .Setup
+                        (
+                            accountManager => accountManager.CreateAdminAsync
+                            (
+                                It.IsAny<string>(),
+                                It.IsAny<string>(),
+                                It.IsAny<string>(),
+                                It.IsAny<string>()
+                            )
+                        )
+                        .ReturnsAsync
+                        (
+                            createAdminAccountDescriptor
+                        );
+
+
+                    var uut = serviceProvider.GetControllerInstance<AccountController>();
+
+                    //Act
+                    var observed = (await uut.CreateAdminAccountAsync(createAdminAccountRequest)) as ObjectResult;
+
+                    //Assert
+                    Assert.IsInstanceOfType(observed, typeof(ObjectResult));
+                    var observedObjectResult = observed as ObjectResult;
+
+                    Assert.AreEqual(400, observedObjectResult.StatusCode);
+                    Assert.AreEqual(AccountController.INVAILD_EMAIL_FORMAT, observedObjectResult.Value);
+                },
+               serviceCollection => ConfigureServices(serviceCollection)
+           );
+        }
+
+        [TestMethod]
+        public async Task CreateAdminAccountAsync_InvaildEmailDomain_ReturnsInvaildEmailDomainWithStatusCode400()
+        {
+            await RunDependencyInjectedTestAsync
+            (
+                async (serviceProvider) =>
+                {
+                    //Setup
+                    var createAdminAccountRequest = new CreateAdminAccountRequest
+                    {
+                        Username = "User1000",
+                        Token = "MyToken",
+                        Password = "Password!"
+                    };
+
+                    var createAdminAccountDescriptor = new CreateAdminAccountDescriptor
+                    {
+                        Result = CreateAdminAccountResult.InvaildEmailDomain,
+                        AccountId = null
+                    };
+
+                    var accountManagerMock = serviceProvider.GetMock<IAccountManager>();
+                    accountManagerMock
+                        .Setup
+                        (
+                            accountManager => accountManager.CreateAdminAsync
+                            (
+                                It.IsAny<string>(),
+                                It.IsAny<string>(),
+                                It.IsAny<string>(),
+                                It.IsAny<string>()
+                            )
+                        )
+                        .ReturnsAsync
+                        (
+                            createAdminAccountDescriptor
+                        );
+
+
+                    var uut = serviceProvider.GetControllerInstance<AccountController>();
+
+                    //Act
+                    var observed = (await uut.CreateAdminAccountAsync(createAdminAccountRequest)) as ObjectResult;
+
+                    //Assert
+                    Assert.IsInstanceOfType(observed, typeof(ObjectResult));
+                    var observedObjectResult = observed as ObjectResult;
+
+                    Assert.AreEqual(400, observedObjectResult.StatusCode);
+                    Assert.AreEqual(AccountController.INVAILD_EMAIL_DOMAIN, observedObjectResult.Value);
+                },
+               serviceCollection => ConfigureServices(serviceCollection)
+           );
+        }
+
+        [TestMethod]
         public async Task CreateAdminAccountAsync_DuplicateUser_ReturnStatusCode409()
         {
             await RunDependencyInjectedTestAsync
@@ -775,6 +885,178 @@ namespace RollerCoaster.Account.API.View.Tests.Controllers
         }
 
         [TestMethod]
+        public async Task CreateUserAccountAsync_InvaildEmailFormat_ReturnsInvaildEmailFormatWithStatusCode400()
+        {
+            await RunDependencyInjectedTestAsync
+            (
+                async (serviceProvider) =>
+                {
+                    //Setup
+                    var createUserAccountRequest = new CreateUserAccountRequest
+                    {
+                        Username = "User1000",
+                        Password = "Password!"
+                    };
+
+                    var createUserAccountDescriptor = new CreateUserAccountDescriptor
+                    {
+                        Result = CreateUserAccountResult.InvaildEmailFormat,
+                        AccountId = 1000
+                    };
+
+                    var claims = new Claim[]
+                    {
+                        new Claim(ClaimTypes.NameIdentifier, createUserAccountDescriptor.AccountId?.ToString()),
+                        new Claim(ClaimTypes.Role, Role.User)
+                    };
+
+                    var generateTokensDescriptor = new GenerateTokensDescriptor
+                    {
+                        Authorized = true,
+                        Tokens = new Tokens
+                        {
+                            AccessToken = "AccessToken123",
+                            AccessTokenExpiresIn = new System.DateTime(2020, 6, 23, 0, 0, 0),
+                            RefreshToken = "RefreshToken123",
+                            RefreshTokenExpiresIn = new System.DateTime(2020, 6, 23, 1, 0, 0),
+                            TokenType = "Bearer"
+                        }
+                    };
+
+                    var accountManagerMock = serviceProvider.GetMock<IAccountManager>();
+                    accountManagerMock
+                        .Setup
+                        (
+                            accountManager => accountManager.CreateUserAsync
+                            (
+                                It.IsAny<string>(),
+                                It.IsAny<string>(),
+                                It.IsAny<string>()
+                            )
+                        )
+                        .ReturnsAsync
+                        (
+                            new CreateUserAccountDescriptor
+                            {
+                                Result = CreateUserAccountResult.InvaildEmailFormat,
+                                AccountId = 1000
+                            }
+                        );
+
+                    var jwtServiceMock = serviceProvider.GetMock<IJWTService<RollerCoasterJWTServiceOptions>>();
+                    jwtServiceMock
+                        .Setup
+                        (
+                            jwtService => jwtService.GenerateTokens(It.IsAny<IEnumerable<Claim>>())
+                        )
+                        .Returns
+                        (
+                            generateTokensDescriptor
+                        );
+
+                    var uut = serviceProvider.GetControllerInstance<AccountController>();
+
+                    //Act
+                    var observed = await uut.CreateUserAccountAsync(createUserAccountRequest);
+
+                    //Assert
+                    Assert.IsInstanceOfType(observed, typeof(ObjectResult));
+                    var observedObjectResult = observed as ObjectResult;
+
+                    Assert.AreEqual(400, observedObjectResult.StatusCode);
+                    Assert.AreEqual(AccountController.INVAILD_EMAIL_FORMAT, observedObjectResult.Value);
+                },
+               serviceCollection => ConfigureServices(serviceCollection)
+           );
+        }
+
+        [TestMethod]
+        public async Task CreateUserAccountAsync_InvaildEmailDomain_ReturnsInvaildEmailDomainWithStatusCode400()
+        {
+            await RunDependencyInjectedTestAsync
+            (
+                async (serviceProvider) =>
+                {
+                    //Setup
+                    var createUserAccountRequest = new CreateUserAccountRequest
+                    {
+                        Username = "User1000",
+                        Password = "Password!"
+                    };
+
+                    var createUserAccountDescriptor = new CreateUserAccountDescriptor
+                    {
+                        Result = CreateUserAccountResult.InvaildEmailDomain,
+                        AccountId = 1000
+                    };
+
+                    var claims = new Claim[]
+                    {
+                        new Claim(ClaimTypes.NameIdentifier, createUserAccountDescriptor.AccountId?.ToString()),
+                        new Claim(ClaimTypes.Role, Role.User)
+                    };
+
+                    var generateTokensDescriptor = new GenerateTokensDescriptor
+                    {
+                        Authorized = true,
+                        Tokens = new Tokens
+                        {
+                            AccessToken = "AccessToken123",
+                            AccessTokenExpiresIn = new System.DateTime(2020, 6, 23, 0, 0, 0),
+                            RefreshToken = "RefreshToken123",
+                            RefreshTokenExpiresIn = new System.DateTime(2020, 6, 23, 1, 0, 0),
+                            TokenType = "Bearer"
+                        }
+                    };
+
+                    var accountManagerMock = serviceProvider.GetMock<IAccountManager>();
+                    accountManagerMock
+                        .Setup
+                        (
+                            accountManager => accountManager.CreateUserAsync
+                            (
+                                It.IsAny<string>(),
+                                It.IsAny<string>(),
+                                It.IsAny<string>()
+                            )
+                        )
+                        .ReturnsAsync
+                        (
+                            new CreateUserAccountDescriptor
+                            {
+                                Result = CreateUserAccountResult.InvaildEmailDomain,
+                                AccountId = 1000
+                            }
+                        );
+
+                    var jwtServiceMock = serviceProvider.GetMock<IJWTService<RollerCoasterJWTServiceOptions>>();
+                    jwtServiceMock
+                        .Setup
+                        (
+                            jwtService => jwtService.GenerateTokens(It.IsAny<IEnumerable<Claim>>())
+                        )
+                        .Returns
+                        (
+                            generateTokensDescriptor
+                        );
+
+                    var uut = serviceProvider.GetControllerInstance<AccountController>();
+
+                    //Act
+                    var observed = await uut.CreateUserAccountAsync(createUserAccountRequest);
+
+                    //Assert
+                    Assert.IsInstanceOfType(observed, typeof(ObjectResult));
+                    var observedObjectResult = observed as ObjectResult;
+
+                    Assert.AreEqual(400, observedObjectResult.StatusCode);
+                    Assert.AreEqual(AccountController.INVAILD_EMAIL_DOMAIN, observedObjectResult.Value);
+                },
+               serviceCollection => ConfigureServices(serviceCollection)
+           );
+        }
+
+        [TestMethod]
         public async Task CreateUserAccountAsync_DuplicateUser_ReturnsStatusCode409()
         {
             await RunDependencyInjectedTestAsync
@@ -980,7 +1262,7 @@ namespace RollerCoaster.Account.API.View.Tests.Controllers
         }
 
         [TestMethod]
-        public async Task LoginAsync__Successful_ReturnsTokensWithStatusCode200()
+        public async Task LoginAsync_Successful_ReturnsTokensWithStatusCode200()
         {
             await RunDependencyInjectedTestAsync
             (
