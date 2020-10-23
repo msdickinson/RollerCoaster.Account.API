@@ -6,6 +6,7 @@ using RollerCoaster.Account.API.Infrastructure.AccountDB;
 using RollerCoaster.Account.API.Infrastructure.AccountEmail;
 using RollerCoaster.Account.API.Infrastructure.PasswordEncryption;
 using RollerCoaster.Account.API.Logic.Models;
+using System.Linq;
 using System.Threading.Tasks;
 namespace RollerCoaster.Account.API.Logic
 {
@@ -44,7 +45,7 @@ namespace RollerCoaster.Account.API.Logic
                 createAccountDescriptor.Result = CreateUserAccountResult.InvaildEmailFormat;
                 return createAccountDescriptor;
             }
-            if (! await _emailService.ValidateEmailDomain(email).ConfigureAwait(false))
+            if (! await _emailService.ValidateEmailDomain(email.Split("@").Last()).ConfigureAwait(false))
             {
                 createAccountDescriptor.Result = CreateUserAccountResult.InvaildEmailDomain;
                 return createAccountDescriptor;

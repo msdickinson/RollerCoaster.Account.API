@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29519.181
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RollerCoaster.Account.API.View", "RollerCoaster.Account.API.View\RollerCoaster.Account.API.View.csproj", "{42079A75-5A67-4F61-AE9F-3D74D5A01E53}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RollerCoaster.Account.API.View.ASP", "RollerCoaster.Account.API.View.ASP\RollerCoaster.Account.API.View.ASP.csproj", "{42079A75-5A67-4F61-AE9F-3D74D5A01E53}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4 Abstractions", "4 Abstractions", "{220857DB-61E3-4F71-9E10-106F6EFB3264}"
 EndProject
@@ -22,7 +22,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RollerCoaster.Account.API.I
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RollerCoaster.Account.API.Abstractions", "RollerCoaster.Account.API.Abstractions\RollerCoaster.Account.API.Abstractions.csproj", "{C7491A9C-CD66-46B8-B915-412BA0640C73}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RollerCoaster.Account.API.View.Tests", "RollerCoaster.Account.API.View.Tests\RollerCoaster.Account.API.View.Tests.csproj", "{7249D11B-29E0-4C63-B6E0-BA668AF2F847}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RollerCoaster.Account.API.View.ASP.Tests", "RollerCoaster.Account.API.View.ASP.Tests\RollerCoaster.Account.API.View.ASP.Tests.csproj", "{7249D11B-29E0-4C63-B6E0-BA668AF2F847}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RollerCoaster.Account.API.Logic", "RollerCoaster.Account.API.Logic\RollerCoaster.Account.API.Logic.csproj", "{89E7C304-4EBB-4A43-82CA-20DD29E0FDD3}"
 EndProject
@@ -30,9 +30,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RollerCoaster.Account.API.L
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RollerCoaster.Account.API.Infrastructure.Tests", "RollerCoaster.Account.API.Infrastructure.Tests\RollerCoaster.Account.API.Infrastructure.Tests.csproj", "{2FDC9D42-282C-4418-8D1A-4FE16E16F9B4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RollerCoaster.Account.Function", "RollerCoaster.Account.Function\RollerCoaster.Account.Function.csproj", "{343DF3F3-25A9-4C3D-9518-8566B70E74EB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RollerCoaster.Account.API.Abstractions.Tests", "RollerCoaster.Account.API.Abstractions.Tests\RollerCoaster.Account.API.Abstractions.Tests.csproj", "{0F949AD2-9460-436E-B28E-D2434991F803}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RollerCoaster.Account.API.Abstractions.Tests", "RollerCoaster.Account.API.Abstractions.Tests\RollerCoaster.Account.API.Abstractions.Tests.csproj", "{0F949AD2-9460-436E-B28E-D2434991F803}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RollerCoaster.Account.API.View.Function", "RollerCoaster.Account.API.View.Function\RollerCoaster.Account.API.View.Function.csproj", "{FED0C2C9-FEB2-43F2-89F6-DB76841FABD8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ASP", "ASP", "{B52CBA24-1F2B-4A84-9172-16BFBE9E5B4A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Function", "Function", "{0DF0225C-5926-425C-9C11-2BA94748E272}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RollerCoaster.Account.API.View.Function.Tests", "RollerCoaster.Account.API.View.Function.Tests\RollerCoaster.Account.API.View.Function.Tests.csproj", "{413A6E9A-93C7-458D-8BE8-EA1A3CF27A71}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -68,28 +74,35 @@ Global
 		{2FDC9D42-282C-4418-8D1A-4FE16E16F9B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2FDC9D42-282C-4418-8D1A-4FE16E16F9B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2FDC9D42-282C-4418-8D1A-4FE16E16F9B4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{343DF3F3-25A9-4C3D-9518-8566B70E74EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{343DF3F3-25A9-4C3D-9518-8566B70E74EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{343DF3F3-25A9-4C3D-9518-8566B70E74EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{343DF3F3-25A9-4C3D-9518-8566B70E74EB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0F949AD2-9460-436E-B28E-D2434991F803}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0F949AD2-9460-436E-B28E-D2434991F803}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0F949AD2-9460-436E-B28E-D2434991F803}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0F949AD2-9460-436E-B28E-D2434991F803}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FED0C2C9-FEB2-43F2-89F6-DB76841FABD8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FED0C2C9-FEB2-43F2-89F6-DB76841FABD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FED0C2C9-FEB2-43F2-89F6-DB76841FABD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FED0C2C9-FEB2-43F2-89F6-DB76841FABD8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{413A6E9A-93C7-458D-8BE8-EA1A3CF27A71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{413A6E9A-93C7-458D-8BE8-EA1A3CF27A71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{413A6E9A-93C7-458D-8BE8-EA1A3CF27A71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{413A6E9A-93C7-458D-8BE8-EA1A3CF27A71}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{42079A75-5A67-4F61-AE9F-3D74D5A01E53} = {F31D88E1-C721-4AB7-A709-81138B4DD58E}
+		{42079A75-5A67-4F61-AE9F-3D74D5A01E53} = {B52CBA24-1F2B-4A84-9172-16BFBE9E5B4A}
 		{F608FA3B-C28F-42AB-A1C2-D965F24E5E2F} = {D226863E-D0D9-47FA-9ACF-F06A02873C59}
 		{C7491A9C-CD66-46B8-B915-412BA0640C73} = {220857DB-61E3-4F71-9E10-106F6EFB3264}
-		{7249D11B-29E0-4C63-B6E0-BA668AF2F847} = {F31D88E1-C721-4AB7-A709-81138B4DD58E}
+		{7249D11B-29E0-4C63-B6E0-BA668AF2F847} = {B52CBA24-1F2B-4A84-9172-16BFBE9E5B4A}
 		{89E7C304-4EBB-4A43-82CA-20DD29E0FDD3} = {28F281E5-78F6-43A8-877C-13B9FA2C6A07}
 		{8F8BB12E-CC27-4BD7-9159-81480057D7CE} = {28F281E5-78F6-43A8-877C-13B9FA2C6A07}
 		{2FDC9D42-282C-4418-8D1A-4FE16E16F9B4} = {D226863E-D0D9-47FA-9ACF-F06A02873C59}
-		{343DF3F3-25A9-4C3D-9518-8566B70E74EB} = {F31D88E1-C721-4AB7-A709-81138B4DD58E}
 		{0F949AD2-9460-436E-B28E-D2434991F803} = {220857DB-61E3-4F71-9E10-106F6EFB3264}
+		{FED0C2C9-FEB2-43F2-89F6-DB76841FABD8} = {0DF0225C-5926-425C-9C11-2BA94748E272}
+		{B52CBA24-1F2B-4A84-9172-16BFBE9E5B4A} = {F31D88E1-C721-4AB7-A709-81138B4DD58E}
+		{0DF0225C-5926-425C-9C11-2BA94748E272} = {F31D88E1-C721-4AB7-A709-81138B4DD58E}
+		{413A6E9A-93C7-458D-8BE8-EA1A3CF27A71} = {0DF0225C-5926-425C-9C11-2BA94748E272}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1FF6AEBB-1AD2-4004-B001-B3777B7851FC}

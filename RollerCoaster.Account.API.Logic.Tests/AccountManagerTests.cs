@@ -35,7 +35,7 @@ namespace RollerCoaster.Account.API.Logic.Tests
                     //Setup
                     var username = "User1000";
                     var password = "Password!";
-                    var email = (string)null;
+                    var email = "SampleEmail@Sample.com";
 
                     var encryptResult = new EncryptResult
                     {
@@ -280,8 +280,8 @@ namespace RollerCoaster.Account.API.Logic.Tests
                     //Setup
                     var username = "User1000";
                     var password = "Password!";
-                    var email = (string)null;
-
+                    var email = "SampleEmail@Sample.com";
+                    var domain = "Sample.com";
                     var encryptResult = new EncryptResult
                     {
                         Hash = "hash",
@@ -387,7 +387,7 @@ namespace RollerCoaster.Account.API.Logic.Tests
                     (
                         emailService => emailService.ValidateEmailDomain
                         (
-                            email
+                            domain
                         ),
                         Times.Once
                     );
@@ -406,7 +406,7 @@ namespace RollerCoaster.Account.API.Logic.Tests
                     //Setup
                     var username = "User1000";
                     var password = "Password!";
-                    var email = (string)null;
+                    var email = "SampleEmail@Sample.com";
 
                     var encryptResult = new EncryptResult
                     {
@@ -525,7 +525,7 @@ namespace RollerCoaster.Account.API.Logic.Tests
                     //Setup
                     var username = "User1000";
                     var password = "Password!";
-                    var email = (string)null;
+                    var email = "SampleEmail@Sample.com";
 
                     var encryptResult = new EncryptResult
                     {
@@ -651,7 +651,7 @@ namespace RollerCoaster.Account.API.Logic.Tests
                     //Setup
                     var username = "User1000";
                     var password = "Password!";
-                    var email = (string)null;
+                    var email = "SampleEmail@Sample.com";
 
                     var encryptResult = new EncryptResult
                     {
@@ -774,7 +774,7 @@ namespace RollerCoaster.Account.API.Logic.Tests
                     //Setup
                     var username = "User1000";
                     var password = "Password!";
-                    var email = (string)null;
+                    var email = "SampleEmail@Sample.com";
 
                     var encryptResult = new EncryptResult
                     {
@@ -914,7 +914,7 @@ namespace RollerCoaster.Account.API.Logic.Tests
                     //Setup
                     var username = "User1000";
                     var password = "Password!";
-                    var email = (string)null;
+                    var email = "SampleEmail@Sample.com";
 
                     var encryptResult = new EncryptResult
                     {
@@ -1204,7 +1204,7 @@ namespace RollerCoaster.Account.API.Logic.Tests
                     //Setup
                     var username = "User1000";
                     var password = "Password!";
-                    var email = (string)null;
+                    var email = "SampleEmail@Sample.com";
 
                     var encryptResult = new EncryptResult
                     {
