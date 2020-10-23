@@ -13,6 +13,7 @@ namespace RollerCoaster.Account.API.Abstractions
         public string ActivateEmailToken { get; set; }
         public string EmailPreferenceToken { get; set; }
         public EmailPreference EmailPreference { get; set; }
+        public string Role { get; set; }
 
     }
 }

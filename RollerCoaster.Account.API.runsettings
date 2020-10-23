@@ -18,6 +18,7 @@
                 <ModulePath>.*newtonsoft.json.bson.dll</ModulePath>
                 <ModulePath>.*newtonsoft.json.dll</ModulePath>
                 <ModulePath>.*bouncycastle.crypto.dll</ModulePath>
+                <ModulePath>.*dickinsonbros.middleware.function.dll</ModulePath>
               </Exclude>
             </ModulePaths>
             <Attributes>

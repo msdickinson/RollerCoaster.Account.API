@@ -12,7 +12,7 @@ namespace RollerCoaster.Account.API.Infrastructure.PasswordEncryption
             byte[] saltByteArray;
             if (string.IsNullOrWhiteSpace(salt))
             {
-                saltByteArray = new byte[128 / 8];
+                saltByteArray = new byte[16];
                 using var rng = RandomNumberGenerator.Create();
                 rng.GetBytes(saltByteArray);
             }
@@ -25,7 +25,7 @@ namespace RollerCoaster.Account.API.Infrastructure.PasswordEncryption
                 salt: saltByteArray,
                 prf: KeyDerivationPrf.HMACSHA256,
                 iterationCount: 10000,
-                numBytesRequested: 256 / 8));
+                numBytesRequested: 32));
 
             return new EncryptResult
             {
