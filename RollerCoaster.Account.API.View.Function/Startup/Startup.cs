@@ -131,6 +131,8 @@ namespace RollerCoaster.Account.API.View.Function.Startup
                     logger,
                     dispose: true
                 );
+
+                loggingBuilder.AddConfiguration(configuration.GetSection("Logging"));
             });
         }
     }

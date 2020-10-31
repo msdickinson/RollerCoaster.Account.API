@@ -161,7 +161,7 @@ namespace RollerCoaster.Account.API.Logic.Tests
                     //Setup
                     var username = "User1000";
                     var password = "Password!";
-                    var email = (string)null;
+                    var email = "1";
 
                     var encryptResult = new EncryptResult
                     {

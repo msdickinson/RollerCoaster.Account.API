@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "RollerCoaster.Account.API.View.Function": {
+      "commandName": "Project",
+      "commandLineArgs": "host start --port 6001"
+    }
+  }
+}

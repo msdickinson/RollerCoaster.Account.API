@@ -40,17 +40,21 @@ namespace RollerCoaster.Account.API.Logic
         {
             var createAccountDescriptor = new CreateUserAccountDescriptor();
 
-            if(!_emailService.IsValidEmailFormat(email))
+            if(email != null)
             {
-                createAccountDescriptor.Result = CreateUserAccountResult.InvaildEmailFormat;
-                return createAccountDescriptor;
+
+                if (!_emailService.IsValidEmailFormat(email))
+                {
+                    createAccountDescriptor.Result = CreateUserAccountResult.InvaildEmailFormat;
+                    return createAccountDescriptor;
+                }
+                if (!await _emailService.ValidateEmailDomain(email.Split("@").Last()).ConfigureAwait(false))
+                {
+                    createAccountDescriptor.Result = CreateUserAccountResult.InvaildEmailDomain;
+                    return createAccountDescriptor;
+                }
             }
-            if (! await _emailService.ValidateEmailDomain(email.Split("@").Last()).ConfigureAwait(false))
-            {
-                createAccountDescriptor.Result = CreateUserAccountResult.InvaildEmailDomain;
-                return createAccountDescriptor;
-            }
-            
+
             var encryptResult = _passwordEncryptionService.Encrypt(password);
 
             var activateEmailToken = _guidService.NewGuid().ToString();
