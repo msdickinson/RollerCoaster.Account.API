@@ -13,4 +13,12 @@
     <PackageReference Include="coverlet.collector" Version="1.3.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="User\Models\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\source\RollerCoaster.Account.API.Entities\RollerCoaster.Account.API.Entities.csproj" />
+  </ItemGroup>
+
 </Project>
