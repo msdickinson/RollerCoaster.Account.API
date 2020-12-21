@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="DickinsonBros.Cosmos" Version="3.0.0" />
+    <PackageReference Include="DickinsonBros.Cosmos" Version="3.2.0" />
     <PackageReference Include="DickinsonBros.Guid.Abstractions" Version="2.0.1" />
     <PackageReference Include="DickinsonBros.NoSQL.Abstractions" Version="1.0.0" />
     <PackageReference Include="DickinsonBros.SQL.Abstractions" Version="2.1.1" />

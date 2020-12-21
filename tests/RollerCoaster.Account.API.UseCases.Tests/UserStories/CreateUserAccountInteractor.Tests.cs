@@ -210,66 +210,6 @@ namespace RollerCoaster.Account.API.UseCases.Tests.UserStories
         }
         #endregion
 
-        #region VaildateUsername
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException), "username")]
-        public async Task VaildateUsername_UsernameIsNull_ThrowsArgumentNullException()
-        {
-            await RunDependencyInjectedTestAsync
-            (
-                async (serviceProvider) =>
-                {
-                    //Setup
-
-                    //--Input
-                    var username = (string)null;
-
-                    //--uut
-                    var uut = serviceProvider.GetService<ICreateUserAccountInteractor>();
-                    var uutConcrete = (CreateUserAccountInteractor)uut;
-
-                    //Act
-                    uutConcrete.VaildateUsername(username);
-
-                    //Assert
-
-                    await Task.CompletedTask.ConfigureAwait(false);
-                },
-                serviceCollection => ConfigureServices(serviceCollection)
-            );
-
-        }
-
-        [TestMethod]
-        public async Task VaildateUsername_UsernameIsNotNull_DoesNotThrow()
-        {
-            await RunDependencyInjectedTestAsync
-            (
-                async (serviceProvider) =>
-                {
-                    //Setup
-
-                    //--Input
-                    var username = "SampleUsername";
-
-                    //--uut
-                    var uut = serviceProvider.GetService<ICreateUserAccountInteractor>();
-                    var uutConcrete = (CreateUserAccountInteractor)uut;
-
-                    //Act
-                    uutConcrete.VaildateUsername(username);
-
-                    //Assert
-
-                    await Task.CompletedTask.ConfigureAwait(false);
-                },
-                serviceCollection => ConfigureServices(serviceCollection)
-            );
-
-        }
-
-        #endregion
-
         #region VaildatePassword
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException), "password")]

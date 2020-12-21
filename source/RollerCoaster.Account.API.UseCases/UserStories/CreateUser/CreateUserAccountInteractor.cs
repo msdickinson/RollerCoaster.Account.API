@@ -39,10 +39,10 @@ namespace RollerCoaster.Account.API.UseCases.UserStorys.CreateUser
 
         public async Task<string> CreateUserAccountAsync(CreateUserAccountRequest createUserRequest)
         {
-            await VaildateRequestAsync(createUserRequest).ConfigureAwait(false);
-            var userEntity = CreateUserEntity(createUserRequest);
-            userEntity = await SaveUserAsync(userEntity).ConfigureAwait(false);
-            await SendActivateEmailAsync(userEntity).ConfigureAwait(false);
+                                await VaildateRequestAsync(createUserRequest).ConfigureAwait(false);
+            var userEntity =          CreateUserEntity(createUserRequest);
+            userEntity =        await SaveUserAsync(userEntity).ConfigureAwait(false);
+                                await SendActivateEmailAsync(userEntity).ConfigureAwait(false);
 
             return userEntity.Username;
         }
@@ -50,9 +50,8 @@ namespace RollerCoaster.Account.API.UseCases.UserStorys.CreateUser
         #region VaildateRequestAsync
         internal async Task VaildateRequestAsync(CreateUserAccountRequest createUserRequest)
         {
-            await VaildateEmailAsync(createUserRequest.Email).ConfigureAwait(false);
-            VaildateUsername(createUserRequest.Username);
             VaildatePassword(createUserRequest.Password);
+            await VaildateEmailAsync(createUserRequest.Email).ConfigureAwait(false);
         }
 
         internal void VaildatePassword(string password)
@@ -68,17 +67,9 @@ namespace RollerCoaster.Account.API.UseCases.UserStorys.CreateUser
             }
         }
 
-        internal void VaildateUsername(string username)
-        {
-            if (username is null)
-            {
-                throw new ArgumentNullException(nameof(username));
-            }
-        }
-
         internal async Task VaildateEmailAsync(string email)
         {
-            if (email == null)
+            if (email is null)
             {
                 return;
             }
@@ -122,14 +113,14 @@ namespace RollerCoaster.Account.API.UseCases.UserStorys.CreateUser
                 throw new DuplicateUsernameException();
             }
 
-            //if 
-            //(
-            //    userEntity.Email != null &&
-            //    await _userEntityRepositoryReader.EmailExistsAsync(userEntity.Email).ConfigureAwait(false)
-            //)
-            //{
-            //    throw new DuplicateEmailException();
-            //}
+            if
+            (
+                userEntity.Email != null &&
+                await _userEntityRepositoryReader.EmailExistsAsync(userEntity.Email).ConfigureAwait(false)
+            )
+            {
+                throw new DuplicateEmailException();
+            }
 
             var userEntityData = await _userEntityRepositoryWriter.SaveAsync(userEntity.GetState()).ConfigureAwait(false);
             return new UserEntity(userEntityData);

@@ -1,4 +1,5 @@
 ﻿using DickinsonBros.Cosmos;
+using DickinsonBros.Cosmos.Models;
 using DickinsonBros.Test;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,6 +16,10 @@ using System.Threading.Tasks;
 
 namespace RollerCoaster.Account.API.Infrastructure.Tests.UserEntityRepository.Writer
 {
+    public class SampleCosmosServiceOptions : CosmosServiceOptions
+    {
+    }
+
     [TestClass]
     public class UserEntityRepositoryWriterTests : BaseTest
     {
@@ -67,7 +72,7 @@ namespace RollerCoaster.Account.API.Infrastructure.Tests.UserEntityRepository.Wr
                     .ReturnsAsync(itemResponseMock.Object);
 
                     //--ICosmosService
-                    var cosmosServiceMock = serviceProvider.GetMock<ICosmosService>();
+                    var cosmosServiceMock = serviceProvider.GetMock<ICosmosService<SampleCosmosServiceOptions>>();
                     var keyObserved = (string)null;
                     var userEntityDTOObserved = (UserEntityDTO)null;
                     cosmosServiceMock
@@ -91,7 +96,7 @@ namespace RollerCoaster.Account.API.Infrastructure.Tests.UserEntityRepository.Wr
 
                     //--uut
                     var uut = serviceProvider.GetService<IUserEntityRepositoryWriter>();
-                    var uutConcrete = (UserEntityRepositoryWriter)uut;
+                    var uutConcrete = (UserEntityRepositoryWriter<SampleCosmosServiceOptions>)uut;
 
                     //Act
                     var observed = await uutConcrete.SaveAsync(userEntityData).ConfigureAwait(false);
@@ -129,8 +134,8 @@ namespace RollerCoaster.Account.API.Infrastructure.Tests.UserEntityRepository.Wr
         #region Helpers
         private IServiceCollection ConfigureServices(IServiceCollection serviceCollection)
         {
-            serviceCollection.AddUserEntityRepositoryWriter();
-            serviceCollection.AddSingleton(Mock.Of<ICosmosService>());
+            serviceCollection.AddUserEntityRepositoryWriter<SampleCosmosServiceOptions>();
+            serviceCollection.AddSingleton(Mock.Of<ICosmosService<SampleCosmosServiceOptions>>());
             serviceCollection.AddSingleton(Mock.Of<Container>());
 
             return serviceCollection;

@@ -4,18 +4,17 @@ using RollerCoaster.Account.API.Entities.Models;
 using RollerCoaster.Account.API.Infrastructure.UserEntityRepository.Extensions;
 using RollerCoaster.Account.API.Infrastructure.UserEntityRepository.Models;
 using RollerCoaster.Account.API.UseCases.InterfaceAdapters.UserEntityRepositoryReader;
-using System;
 using System.Threading.Tasks;
 
 namespace RollerCoaster.Account.API.Infrastructure.UserEntityRepository.Reader
 {
-    public class UserEntityRepositoryReader : IUserEntityRepositoryReader
+    public class UserEntityRepositoryReader<T> : IUserEntityRepositoryReader
     {
-        internal readonly ICosmosService _cosmosService;
+        internal readonly ICosmosService<T> _cosmosService;
 
         public UserEntityRepositoryReader
         (
-            ICosmosService cosmosService
+            ICosmosService<T> cosmosService
         )
         {
             _cosmosService = cosmosService;

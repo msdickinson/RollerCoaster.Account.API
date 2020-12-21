@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using DickinsonBros.Cosmos.Models;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RollerCoaster.Account.API.Infrastructure.UserEntityRepository.Writer;
 using RollerCoaster.Account.API.Infrastructure.UserEntityRepository.Writer.Extensions;
@@ -7,6 +8,10 @@ using System.Linq;
 
 namespace RollerCoaster.Account.API.Infrastructure.Tests.UserEntityRepository.Writer.Extensions
 {
+    public class SampleCosmosServiceOptions : CosmosServiceOptions
+    { 
+    }
+
     [TestClass]
     public class IServiceCollectionExtensionsTests
     {
@@ -17,11 +22,11 @@ namespace RollerCoaster.Account.API.Infrastructure.Tests.UserEntityRepository.Wr
             var serviceCollection = new ServiceCollection();
 
             // Act
-            serviceCollection.AddUserEntityRepositoryWriter();
+            serviceCollection.AddUserEntityRepositoryWriter<SampleCosmosServiceOptions>();
 
             // Assert
             Assert.IsTrue(serviceCollection.Any(serviceDefinition => serviceDefinition.ServiceType == typeof(IUserEntityRepositoryWriter) &&
-                                           serviceDefinition.ImplementationType == typeof(UserEntityRepositoryWriter) &&
+                                           serviceDefinition.ImplementationType == typeof(UserEntityRepositoryWriter<SampleCosmosServiceOptions>) &&
                                            serviceDefinition.Lifetime == ServiceLifetime.Singleton));
         }
     }
