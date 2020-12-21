@@ -132,9 +132,9 @@ namespace RollerCoaster.Account.API.UseCases.Tests.UserStories
                     )
                     .Callback
                     (
-                        (UserEntityData userEntityData) =>
+                        (UserEntityData userEntityDataCB) =>
                         {
-                            userEntityDataObserved = userEntityData;
+                            userEntityDataObserved = userEntityDataCB;
                         }
                     )
 
@@ -311,7 +311,7 @@ namespace RollerCoaster.Account.API.UseCases.Tests.UserStories
                     //Setup
 
                     //--Input
-                    var email = (string)null;
+                    var emailInput = (string)null;
 
                     //--IEmail
                     var emailMock = serviceProvider.GetMock<IEmail>();
@@ -329,7 +329,7 @@ namespace RollerCoaster.Account.API.UseCases.Tests.UserStories
                     var uutConcrete = (CreateUserAccountInteractor)uut;
 
                     //Act
-                    await uutConcrete.VaildateEmailAsync(email).ConfigureAwait(false);
+                    await uutConcrete.VaildateEmailAsync(emailInput).ConfigureAwait(false);
 
                     //Assert
                     emailMock
@@ -357,7 +357,7 @@ namespace RollerCoaster.Account.API.UseCases.Tests.UserStories
                     //Setup
 
                     //--Input
-                    var email = "SampleEmail@Email.com";
+                    var emailInput = "SampleEmail@Email.com";
 
                     //--IEmail
                     var emailMock = serviceProvider.GetMock<IEmail>();
@@ -375,7 +375,7 @@ namespace RollerCoaster.Account.API.UseCases.Tests.UserStories
                     var uutConcrete = (CreateUserAccountInteractor)uut;
 
                     //Act
-                    await uutConcrete.VaildateEmailAsync(email).ConfigureAwait(false);
+                    await uutConcrete.VaildateEmailAsync(emailInput).ConfigureAwait(false);
 
                     //Assert
                     emailMock
@@ -383,7 +383,7 @@ namespace RollerCoaster.Account.API.UseCases.Tests.UserStories
                     (
                         emailService => emailService.VaildateEmailAsync
                         (
-                           email
+                           emailInput
                         ),
                         Times.Once
                     );
@@ -404,7 +404,7 @@ namespace RollerCoaster.Account.API.UseCases.Tests.UserStories
                     //Setup
 
                     //--Input
-                    var email = "NotVaildEmailFormat";
+                    var emailInput = "NotVaildEmailFormat";
 
                     //--IEmail
                     var emailMock = serviceProvider.GetMock<IEmail>();
@@ -423,7 +423,7 @@ namespace RollerCoaster.Account.API.UseCases.Tests.UserStories
                     var uutConcrete = (CreateUserAccountInteractor)uut;
 
                     //Act
-                    await uutConcrete.VaildateEmailAsync(email).ConfigureAwait(false);
+                    await uutConcrete.VaildateEmailAsync(emailInput).ConfigureAwait(false);
 
                     //Assert
                 },
@@ -443,7 +443,7 @@ namespace RollerCoaster.Account.API.UseCases.Tests.UserStories
                     //Setup
 
                     //--Input
-                    var email = "Email@InvaildEmailDomain.com";
+                    var emailInput = "Email@InvaildEmailDomain.com";
 
                     //--IEmail
                     var emailMock = serviceProvider.GetMock<IEmail>();
@@ -462,7 +462,7 @@ namespace RollerCoaster.Account.API.UseCases.Tests.UserStories
                     var uutConcrete = (CreateUserAccountInteractor)uut;
 
                     //Act
-                    await uutConcrete.VaildateEmailAsync(email).ConfigureAwait(false);
+                    await uutConcrete.VaildateEmailAsync(emailInput).ConfigureAwait(false);
 
                     //Assert
                 },
@@ -770,7 +770,7 @@ namespace RollerCoaster.Account.API.UseCases.Tests.UserStories
                     {
                         await uutConcrete.SaveUserAsync(userEntity).ConfigureAwait(false);
                     }
-                    catch(Exception ex)
+                    catch (Exception)
                     {
 
                     };
@@ -920,7 +920,7 @@ namespace RollerCoaster.Account.API.UseCases.Tests.UserStories
 
                         await uutConcrete.SaveUserAsync(userEntity).ConfigureAwait(false);
                     }
-                    catch(Exception ex)
+                    catch (Exception)
                     {
 
                     }
@@ -996,7 +996,7 @@ namespace RollerCoaster.Account.API.UseCases.Tests.UserStories
 
                         await uutConcrete.SaveUserAsync(userEntity).ConfigureAwait(false);
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
 
                     }
@@ -1167,9 +1167,9 @@ namespace RollerCoaster.Account.API.UseCases.Tests.UserStories
                     )
                     .Callback
                     (
-                        (UserEntityData userEntityData) =>
+                        (UserEntityData userEntityDataCB) =>
                         {
-                            userEntityDataObserved = userEntityData;
+                            userEntityDataObserved = userEntityDataCB;
                         }
                     )
 
@@ -1288,9 +1288,9 @@ namespace RollerCoaster.Account.API.UseCases.Tests.UserStories
                     )
                     .Callback
                     (
-                        (UserEntityData userEntityData) =>
+                        (UserEntityData userEntityDataCB) =>
                         {
-                            userEntityDataObserved = userEntityData;
+                            userEntityDataObserved = userEntityDataCB;
                         }
                     )
 

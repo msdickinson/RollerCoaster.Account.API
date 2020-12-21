@@ -186,9 +186,9 @@ namespace RollerCoaster.Account.API.View.Function.Tests.Functions.Account
                                 It.IsAny<CreateUserAccountRequest>()
                             )
                         )
-                        .Callback((CreateUserAccountRequest createUserAccountRequest) =>
+                        .Callback((CreateUserAccountRequest createUserAccountRequestCB) =>
                         {
-                            createUserAccountRequestObserved = createUserAccountRequest;
+                            createUserAccountRequestObserved = createUserAccountRequestCB;
                         })
                         .ReturnsAsync
                         (
@@ -317,9 +317,9 @@ namespace RollerCoaster.Account.API.View.Function.Tests.Functions.Account
                             It.IsAny<CreateUserAccountRequest>()
                         )
                     )
-                    .Callback((CreateUserAccountRequest createUserAccountRequest) =>
+                    .Callback((CreateUserAccountRequest createUserAccountRequestCB) =>
                     {
-                        createUserAccountRequestObserved = createUserAccountRequest;
+                        createUserAccountRequestObserved = createUserAccountRequestCB;
                     })
                     .ReturnsAsync
                     (
@@ -453,9 +453,9 @@ namespace RollerCoaster.Account.API.View.Function.Tests.Functions.Account
                                 It.IsAny<CreateUserAccountRequest>()
                             )
                         )
-                        .Callback((CreateUserAccountRequest createUserAccountRequest) =>
+                        .Callback((CreateUserAccountRequest createUserAccountRequestCB) =>
                         {
-                            createUserAccountRequestObserved = createUserAccountRequest;
+                            createUserAccountRequestObserved = createUserAccountRequestCB;
                         })
                         .ThrowsAsync
                         (
