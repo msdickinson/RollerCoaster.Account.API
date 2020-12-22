@@ -47,7 +47,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RollerCoaster.Account.API.V
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3 Scripts", "3 Scripts", "{1B422BB1-3C67-4158-B346-3BFF209CF374}"
 	ProjectSection(SolutionItems) = preProject
-		scripts\Dev.yml = scripts\Dev.yml
+		scripts\Build Develop.yml = scripts\Build Develop.yml
+		scripts\Deploy Deploy.yml = scripts\Deploy Deploy.yml
 		scripts\Prod.yml = scripts\Prod.yml
 		scripts\RollerCoaster.Account.API.runsettings = scripts\RollerCoaster.Account.API.runsettings
 	EndProjectSection
