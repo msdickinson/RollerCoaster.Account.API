@@ -13,7 +13,7 @@ pool:
  vmImage: 'windows-latest'
 
 variables:
-  buildConfiguration: 'Debug'
+  buildConfiguration: 'release'
 
 steps:
 - task: UseDotNet@2
@@ -25,11 +25,11 @@ steps:
     command: 'build'
     projects: '**/*.csproj'
     configuration: '$(buildConfiguration)'
-- task: VSTest@2
+
+- task: AzureRmWebAppDeployment@4
   inputs:
-    testSelector: 'testAssemblies'
-    testAssemblyVer2: |
-      **\*Tests*.dll
-      !**\*TestAdapter.dll
-      !**\obj\**
-    searchFolder: '$(System.DefaultWorkingDirectory)'
+    ConnectionType: 'AzureRM'
+    azureSubscription: 'MarkDickinson(eb1f524e-8b8f-4d81-a10e-1dbced036254)'
+    appType: 'webApp'
+    WebAppName: 'RollerCoasterAccountAPI-Develop'
+    packageForLinux: '$(System.DefaultWorkingDirectory)**/source/**/*.zip'
