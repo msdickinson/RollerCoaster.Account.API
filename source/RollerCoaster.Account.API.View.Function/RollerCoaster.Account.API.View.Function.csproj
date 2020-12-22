@@ -1,0 +1,63 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <LangVersion>8.0</LangVersion>
+    <AzureFunctionsVersion>v3</AzureFunctionsVersion>
+    <_FunctionsSkipCleanOutput>true</_FunctionsSkipCleanOutput>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="appsettings.DEBUG.json" />
+    <None Remove="appsettings.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="appsettings.DEBUG.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="DickinsonBros.DataTable" Version="2.0.1" />
+    <PackageReference Include="DickinsonBros.DateTime" Version="3.0.0" />
+    <PackageReference Include="DickinsonBros.Email" Version="4.0.0" />
+    <PackageReference Include="DickinsonBros.Encryption.Certificate" Version="6.1.1" />
+    <PackageReference Include="DickinsonBros.Encryption.JWT" Version="2.0.0" />
+    <PackageReference Include="DickinsonBros.Guid" Version="3.0.0" />
+    <PackageReference Include="DickinsonBros.Logger" Version="3.0.0" />
+    <PackageReference Include="Dickinsonbros.Middleware.Function" Version="1.0.3" />
+    <PackageReference Include="DickinsonBros.Redactor" Version="4.0.0" />
+    <PackageReference Include="DickinsonBros.SQL" Version="4.0.0" />
+    <PackageReference Include="DickinsonBros.Stopwatch" Version="4.0.0" />
+    <PackageReference Include="DickinsonBros.Telemetry" Version="6.0.0" />
+    <PackageReference Include="DickinsonBros.Telemetry.Abstractions" Version="5.1.0" />
+    <PackageReference Include="DnsClient" Version="1.3.2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.9" />
+    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.9" />
+    <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
+    <PackageReference Include="Serilog.AspNetCore" Version="3.4.0" />
+    <PackageReference Include="Serilog.Sinks.Async" Version="1.4.0" />
+    <PackageReference Include="Serilog.Sinks.Elasticsearch" Version="8.4.1" />
+    <PackageReference Include="Serilog.Sinks.Splunk" Version="3.6.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="4.7.0" />
+    <PackageReference Include="System.Text.Json" Version="4.7.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RollerCoaster.Account.API.Infrastructure\RollerCoaster.Account.API.Infrastructure.csproj" />
+    <ProjectReference Include="..\RollerCoaster.Account.API.UseCases\RollerCoaster.Account.API.UseCases.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="host.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="local.settings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+    </None>
+  </ItemGroup>
+</Project>
