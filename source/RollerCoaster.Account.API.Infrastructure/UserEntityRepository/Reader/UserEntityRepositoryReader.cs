@@ -4,6 +4,7 @@ using RollerCoaster.Account.API.Entities.Models;
 using RollerCoaster.Account.API.Infrastructure.UserEntityRepository.Extensions;
 using RollerCoaster.Account.API.Infrastructure.UserEntityRepository.Models;
 using RollerCoaster.Account.API.UseCases.InterfaceAdapters.UserEntityRepositoryReader;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace RollerCoaster.Account.API.Infrastructure.UserEntityRepository.Reader
@@ -47,8 +48,16 @@ namespace RollerCoaster.Account.API.Infrastructure.UserEntityRepository.Reader
 
         public async Task<bool> EmailExistsAsync(string email)
         {
-            await Task.CompletedTask.ConfigureAwait(false);
-            return false;
+            var fetchedQuerySampleModel = await _cosmosService.QueryAsync<UserEntityDTO>
+            (
+                new QueryDefinition("SELECT * FROM c where c.email = @email")
+                    .WithParameter("@email", email),
+                new Microsoft.Azure.Cosmos.QueryRequestOptions
+                {
+                    MaxItemCount = 1
+                }
+            ).ConfigureAwait(false);
+            return fetchedQuerySampleModel.Any();
         }
 
     }

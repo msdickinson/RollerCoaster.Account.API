@@ -11,6 +11,8 @@ using RollerCoaster.Account.API.Infrastructure.UserEntityRepository.Models;
 using RollerCoaster.Account.API.Infrastructure.UserEntityRepository.Reader;
 using RollerCoaster.Account.API.Infrastructure.UserEntityRepository.Reader.Extensions;
 using RollerCoaster.Account.API.UseCases.InterfaceAdapters.UserEntityRepositoryReader;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -418,6 +420,220 @@ namespace RollerCoaster.Account.API.Infrastructure.Tests.UserEntityRepository.Re
           );
         }
 
+        #endregion
+
+
+        #region EmailExistsAsync
+
+        [TestMethod]
+        public async Task EmailExistsAsync_Runs_QueryAsyncCalled()
+        {
+            await RunDependencyInjectedTestAsync
+            (
+                async (serviceProvider) =>
+                {
+                    //Setup
+                    var email = "SampleEmail@email.com";
+
+                    var userEntityDTO = new UserEntityDTO
+                    {
+                        ActivateEmailToken = "SampleActivateEmailToken",
+                        EmailActivated = false,
+                        Email = "SampleEmail",
+                        EmailPreference = EmailPreference.AccountOnly,
+                        EmailPreferenceToken = "SampleEmailPreferenceToken",
+                        PasswordHash = "SamplePasswordHash",
+                        Role = Role.User,
+                        Salt = "SampleSalt",
+                        Username = "SampleUsername",
+                        _etag = "SampleVersion",
+                        Id = "SampleUsername",
+                        Key = "SampleUsername",
+                    };
+
+
+                    var userEntityDTOs = new List<UserEntityDTO>
+                    {
+                        userEntityDTO
+                    };
+
+                    // Act
+                    var userEntityData = userEntityDTO.ToUserEntityData();
+
+                    //--Container                    
+
+                    //--ICosmosService
+                    var cosmosServiceMock = serviceProvider.GetMock<ICosmosService<SampleCosmosServiceOptions>>();
+                    cosmosServiceMock
+                    .Setup
+                    (
+                        guidService => guidService.QueryAsync<UserEntityDTO>
+                        (
+                            It.IsAny<QueryDefinition>(),
+                            It.IsAny<QueryRequestOptions>()
+                        )
+                    )
+                    .ReturnsAsync
+                    (
+                        userEntityDTOs.AsEnumerable()
+                    );
+
+                    //--uut
+                    var uut = serviceProvider.GetService<IUserEntityRepositoryReader>();
+                    var uutConcrete = (UserEntityRepositoryReader<SampleCosmosServiceOptions>)uut;
+
+                    //Act
+                    var observed = await uutConcrete.EmailExistsAsync(email).ConfigureAwait(false);
+
+                    //Assert
+                    cosmosServiceMock
+                    .Verify
+                    (
+                        guidService => guidService.QueryAsync<UserEntityDTO>
+                        (
+                            It.IsAny<QueryDefinition>(),
+                            It.IsAny<QueryRequestOptions>()
+                        ),
+                        Times.Once
+                    );
+                },
+              serviceCollection => ConfigureServices(serviceCollection)
+          );
+        }
+
+        [TestMethod]
+        public async Task EmailExistsAsync_AtLeastOneEmailExists_ReturnsTrue()
+        {
+            await RunDependencyInjectedTestAsync
+            (
+                async (serviceProvider) =>
+                {
+                    //Setup
+                    var email = "SampleEmail@email.com";
+
+                    var userEntityDTO = new UserEntityDTO
+                    {
+                        ActivateEmailToken = "SampleActivateEmailToken",
+                        EmailActivated = false,
+                        Email = "SampleEmail",
+                        EmailPreference = EmailPreference.AccountOnly,
+                        EmailPreferenceToken = "SampleEmailPreferenceToken",
+                        PasswordHash = "SamplePasswordHash",
+                        Role = Role.User,
+                        Salt = "SampleSalt",
+                        Username = "SampleUsername",
+                        _etag = "SampleVersion",
+                        Id = "SampleUsername",
+                        Key = "SampleUsername",
+                    };
+
+
+                    var userEntityDTOs = new List<UserEntityDTO>
+                    {
+                        userEntityDTO
+                    };
+
+                    // Act
+                    var userEntityData = userEntityDTO.ToUserEntityData();
+
+                    //--Container                    
+
+                    //--ICosmosService
+                    var cosmosServiceMock = serviceProvider.GetMock<ICosmosService<SampleCosmosServiceOptions>>();
+                    cosmosServiceMock
+                    .Setup
+                    (
+                        guidService => guidService.QueryAsync<UserEntityDTO>
+                        (
+                            It.IsAny<QueryDefinition>(),
+                            It.IsAny<QueryRequestOptions>()
+                        )
+                    )
+                    .ReturnsAsync
+                    (
+                        userEntityDTOs.AsEnumerable()
+                    );
+
+                    //--uut
+                    var uut = serviceProvider.GetService<IUserEntityRepositoryReader>();
+                    var uutConcrete = (UserEntityRepositoryReader<SampleCosmosServiceOptions>)uut;
+
+                    //Act
+                    var observed = await uutConcrete.EmailExistsAsync(email).ConfigureAwait(false);
+
+                    //Assert
+                    Assert.IsTrue(observed);
+                },
+              serviceCollection => ConfigureServices(serviceCollection)
+          );
+        }
+
+        [TestMethod]
+        public async Task EmailExistsAsync_NoEmailsExist_ReturnsFalse()
+        {
+            await RunDependencyInjectedTestAsync
+            (
+                async (serviceProvider) =>
+                {
+                    //Setup
+                    var email = "SampleEmail@email.com";
+
+                    var userEntityDTO = new UserEntityDTO
+                    {
+                        ActivateEmailToken = "SampleActivateEmailToken",
+                        EmailActivated = false,
+                        Email = "SampleEmail",
+                        EmailPreference = EmailPreference.AccountOnly,
+                        EmailPreferenceToken = "SampleEmailPreferenceToken",
+                        PasswordHash = "SamplePasswordHash",
+                        Role = Role.User,
+                        Salt = "SampleSalt",
+                        Username = "SampleUsername",
+                        _etag = "SampleVersion",
+                        Id = "SampleUsername",
+                        Key = "SampleUsername",
+                    };
+
+
+                    var userEntityDTOs = new List<UserEntityDTO>
+                    {
+                        userEntityDTO
+                    };
+
+                    // Act
+                    var userEntityData = userEntityDTO.ToUserEntityData();
+
+                    //--Container                    
+
+                    //--ICosmosService
+                    var cosmosServiceMock = serviceProvider.GetMock<ICosmosService<SampleCosmosServiceOptions>>();
+                    cosmosServiceMock
+                    .Setup
+                    (
+                        guidService => guidService.QueryAsync<UserEntityDTO>
+                        (
+                            It.IsAny<QueryDefinition>(),
+                            It.IsAny<QueryRequestOptions>()
+                        )
+                    )
+                    .ReturnsAsync
+                    (
+                        userEntityDTOs.AsEnumerable()
+                    );
+
+                    //--uut
+                    var uut = serviceProvider.GetService<IUserEntityRepositoryReader>();
+                    var uutConcrete = (UserEntityRepositoryReader<SampleCosmosServiceOptions>)uut;
+
+                    //Act
+                    var observed = await uutConcrete.EmailExistsAsync(email).ConfigureAwait(false);
+
+                    //Assert
+                    Assert.IsTrue(observed);
+                },
+              serviceCollection => ConfigureServices(serviceCollection)
+          );
+        }
         #endregion
 
         #region Helpers
